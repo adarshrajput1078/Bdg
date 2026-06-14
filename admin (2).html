@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>13L ROCKY | ADMIN COMMAND</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Poppins:wght@400;600;800&display=swap');
+        
+        body { margin: 0; padding: 15px; font-family: 'Poppins', sans-serif; background: #050505; color: white; display: flex; flex-direction: column; align-items: center; overflow-x: hidden; }
+        .container { background: linear-gradient(135deg, rgba(20,20,20,0.95), rgba(5,5,5,0.95)); padding: 20px; border-radius: 8px; width: 100%; max-width: 650px; border: 1px solid rgba(0, 255, 204, 0.2); margin-bottom: 20px; box-shadow: 0 0 20px rgba(0,0,0,0.8); box-sizing: border-box; }
+        h2 { color: #fff; text-align: center; font-weight: 900; margin-top: 0; border-bottom: 1px solid #222; padding-bottom: 10px; font-family: 'Orbitron', sans-serif; letter-spacing: 2px;}
+        h2 span { color: #00ffcc; text-shadow: 0 0 10px #00ffcc; }
+        h3 { color: #ffd700; font-size: 14px; margin-top: 0; font-family: 'Orbitron', sans-serif; letter-spacing: 1px; text-transform: uppercase; display: flex; justify-content: space-between; align-items: center;}
+        
+        .stats { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; width: 100%; max-width: 650px; }
+        .stat-box { flex: 1 1 calc(25% - 10px); background: #111; padding: 15px 5px; border-radius: 8px; text-align: center; border: 1px solid #222; }
+        .stat-num { font-size: 20px; font-weight: 800; color: #fff; font-family: 'Orbitron', sans-serif;}
+        .stat-label { font-size: 8px; color: #888; text-transform: uppercase; font-weight: bold; margin-top: 5px;}
+
+        .table-wrap { max-height: 350px; overflow-y: auto; background: #0a0a0a; border-radius: 8px; border: 1px solid #222; margin-bottom: 10px;}
+        table { width: 100%; border-collapse: collapse; font-size: 11px; font-family: 'Orbitron', sans-serif;}
+        th, td { border-bottom: 1px solid #222; padding: 10px 5px; text-align: center; vertical-align: middle;}
+        th { background: #151515; color: #888; position: sticky; top: 0; z-index: 2; border-bottom: 2px solid #333;}
+        
+        .search-bar { width: 100%; padding: 8px 12px; margin-bottom: 10px; border-radius: 4px; border: 1px solid #333; background: #111; color: #00ffcc; font-family: 'Orbitron', sans-serif; box-sizing: border-box;}
+        .search-bar:focus { border-color: #ffd700; outline: none;}
+        td select, td input[type="number"], input.live-input, #adminPass { width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #333; background: rgba(0,0,0,0.8); color: #00ffcc; font-family: 'Orbitron', sans-serif; box-sizing: border-box; text-align: center; font-size: 11px; margin-bottom: 10px;}
+        td input:focus, td select:focus, input.live-input:focus, #adminPass:focus { border-color: #00ffcc; outline: none; }
+        
+        button { padding: 6px 12px; font-size: 10px; font-family: 'Orbitron', sans-serif; font-weight: 900; cursor: pointer; border-radius: 4px; border: none; text-transform: uppercase; transition: 0.2s;}
+        button:active { transform: scale(0.95); }
+        .btn-publish { background: #00ffcc; color: #000; width: 100%; padding: 10px;}
+        .btn-approve { background: rgba(0, 255, 204, 0.2); color: #00ffcc; border: 1px solid #00ffcc; margin-bottom: 4px; width: 100%;}
+        .btn-reject { background: rgba(255, 42, 42, 0.2); color: #ff2a2a; border: 1px solid #ff2a2a; width: 100%;}
+        .btn-export { background: transparent; border: 1px solid #ffd700; color: #ffd700; padding: 4px 8px; font-size: 9px;}
+        .btn-export:hover { background: rgba(255, 215, 0, 0.2); }
+
+        .row-urgent { background: rgba(255, 42, 42, 0.15); animation: urgentGlow 1.5s infinite alternate; }
+        .row-urgent td { color: #ff2a2a !important; font-weight: bold; text-shadow: 0 0 5px rgba(255, 42, 42, 0.5);}
+        .badge-urgent { background: #ff2a2a; color: white; padding: 2px 6px; border-radius: 3px; font-size: 9px; animation: pulse 1s infinite;}
+        .badge-normal { background: #444; color: white; padding: 2px 6px; border-radius: 3px; font-size: 9px;}
+        .badge-success { background: rgba(0, 255, 204, 0.2); border: 1px solid #00ffcc; color: #00ffcc; padding: 2px 6px; border-radius: 3px; font-size: 9px;}
+        .badge-danger { background: rgba(255, 42, 42, 0.2); border: 1px solid #ff2a2a; color: #ff2a2a; padding: 2px 6px; border-radius: 3px; font-size: 9px;}
+        .status-live { color: #00ffcc; font-weight: bold; text-shadow: 0 0 5px #00ffcc;}
+        .status-unset { color: #555; }
+
+        @keyframes urgentGlow { 0% { box-shadow: inset 0 0 5px #ff2a2a; } 100% { box-shadow: inset 0 0 20px #ff2a2a; border-left: 2px solid #ff2a2a; border-right: 2px solid #ff2a2a;} }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+
+        #toast { position: fixed; bottom: -50px; left: 50%; transform: translateX(-50%); background: #0a0a0a; color: white; padding: 10px 20px; border-radius: 4px; font-size: 11px; font-weight: bold; border-left: 2px solid #00ffcc; transition: 0.4s; z-index: 1000; font-family: 'Orbitron', sans-serif;}
+        #toast.show { bottom: 30px; }
+        
+        .hidden { display: none !important; }
+        .dashboard-active { display: flex !important; flex-direction: column; align-items: center; width: 100%; }
+    </style>
+</head>
+<body>
+
+    <div id="toast">SYSTEM MSG</div>
+
+    <div class="container" id="loginScreen" style="margin-top: 100px; max-width: 400px;">
+        <h2>ADMIN <span>LOGIN</span></h2>
+        <input type="password" id="adminPass" placeholder="ENTER ADMIN KEY">
+        <button class="btn-publish" onclick="loginAdmin()">AUTHENTICATE</button>
+    </div>
+
+    <div id="dashboard" class="hidden">
+        
+        <h2>ROCKY 13L <span>TERMINAL</span></h2>
+
+        <div class="stats">
+            <div class="stat-box" style="border-bottom: 2px solid #00ffcc;"><div class="stat-num" id="statPatterns">0</div><div class="stat-label">LIVE RESULTS</div></div>
+            <div class="stat-box" style="border-bottom: 2px solid #ffeb3b;"><div class="stat-num" id="statReqs">0</div><div class="stat-label">PENDING REQS</div></div>
+            <div class="stat-box" style="border-bottom: 2px solid #00ffcc;"><div class="stat-num" id="statApproved">0</div><div class="stat-label">TOTAL APPROVED</div></div>
+            <div class="stat-box" style="border-bottom: 2px solid #ff2a2a;"><div class="stat-num" id="statBlocked">0</div><div class="stat-label">TOTAL BLOCKED</div></div>
+        </div>
+
+        <div class="container" style="border-color: #ff9800; box-shadow: 0 0 15px rgba(255, 152, 0, 0.2);">
+            <h3 style="color:#ff9800;">🎥 LIVE STREAM WIN TRIGGER</h3>
+            <div style="display: flex; gap: 8px; margin-bottom: 10px;">
+                <input type="text" id="winPeriodInput" class="live-input" placeholder="PERIOD (e.g. 12345)" style="margin:0;">
+                <input type="text" id="winResultInput" class="live-input" placeholder="RESULT (e.g. BIG [8])" style="margin:0;">
+            </div>
+            <button class="btn-publish" style="background: #ff9800; color: #000;" onclick="sendLiveWin()">🔥 FIRE WIN ANIMATION TO ALL</button>
+        </div>
+
+        <div class="container" style="border-color: #ffeb3b;">
+            <h3 style="color:#ffeb3b;">📥 VERIFICATIONS (2 MIN DELAYED)</h3>
+            <div class="table-wrap" style="max-height: 200px;">
+                <table>
+                    <thead><tr><th>UID</th><th>STATUS</th><th>TIME</th><th>ACTION</th></tr></thead>
+                    <tbody id="requestTableBody"><tr><td colspan="4" style="color:#555;">Loading secure database...</td></tr></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="container" style="border-color: #888;">
+            <h3><span>📜 ADMIN ACTION HISTORY</span><button class="btn-export" onclick="exportHistoryCSV()">DOWNLOAD CSV</button></h3>
+            <input type="text" id="searchInput" class="search-bar" placeholder="🔍 Search UID..." onkeyup="filterHistory()">
+            <div class="table-wrap" style="max-height: 250px;">
+                <table>
+                    <thead><tr><th>UID</th><th>ACTION</th><th>DATE & TIME</th></tr></thead>
+                    <tbody id="historyTableBody"><tr><td colspan="3" style="color:#555;">Fetching logs...</td></tr></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="container">
+            <h3>📝 FIX GAME RESULTS (100 COMBINATIONS)</h3>
+            <div class="table-wrap" style="max-height: 400px;">
+                <table>
+                    <thead><tr><th style="width: 15%;">COMB</th><th style="width: 25%;">SIZE</th><th style="width: 20%;">NUM</th><th style="width: 20%;">LIVE</th><th style="width: 20%;">ACTION</th></tr></thead>
+                    <tbody id="patternTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, set, onValue, remove, push } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        // FIREBASE CONFIGURATION
+        const firebaseConfig = {
+            apiKey: "AIzaSyAGQ8iW7GaYtDINwkfismc_7uBw2zF7V70",
+            authDomain: "l-rocky.firebaseapp.com",
+            databaseURL: "https://l-rocky-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "l-rocky",
+            storageBucket: "l-rocky.firebasestorage.app",
+            messagingSenderId: "524361045191",
+            appId: "1:524361045191:web:1576f60a76f89c01c2dae2"
+        };
+        const db = getDatabase(initializeApp(firebaseConfig));
+        let globalHistoryData = []; 
+
+        // UTILITY FUNCTIONS
+        function showToast(msg, isErr=false) { 
+            let t = document.getElementById("toast"); t.innerText = "> " + msg; 
+            t.style.borderLeftColor = isErr ? "#ff2a2a" : (isErr === 'warn' ? '#ff9800' : "#00ffcc"); 
+            t.className = "show"; setTimeout(() => t.className = "", 3000); 
+        }
+        function formatDateTime(ts) { let d = new Date(ts); return `${d.getDate()}/${d.getMonth()+1}/${d.getFullYear()} ${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}`; }
+
+        let liveAdminPass = "MASTER123";
+        onValue(ref(db, 'settings/admin_password'), (snap) => { if(snap.exists()) liveAdminPass = snap.val(); });
+
+        window.loginAdmin = () => {
+            if(document.getElementById('adminPass').value === liveAdminPass) {
+                document.getElementById('loginScreen').classList.add('hidden');
+                document.getElementById('dashboard').classList.remove('hidden');
+                document.getElementById('dashboard').classList.add('dashboard-active');
+                
+                generateClassicTable(); 
+                loadData(); 
+                showToast("ACCESS GRANTED");
+            } else { 
+                showToast("AUTH FAILED", true); 
+            }
+        };
+
+        // FIRE WIN ANIMATION GLOBALLY
+        window.sendLiveWin = async () => {
+            let period = document.getElementById('winPeriodInput').value.trim(); let result = document.getElementById('winResultInput').value.trim();
+            if(!period || !result) return showToast("ENTER PERIOD & RESULT!", true);
+            await set(ref(db, 'live_events/win_trigger'), { period: period, result: result, timestamp: Date.now() });
+            showToast("WIN ANIMATION SENT TO ALL USERS!", 'warn');
+            document.getElementById('winPeriodInput').value = ""; document.getElementById('winResultInput').value = "";
+        };
+
+        // GENERATE 100 COMBINATIONS
+        function generateClassicTable() {
+            let tbody = document.getElementById('patternTableBody'); tbody.innerHTML = "";
+            for(let i=0; i<=9; i++) {
+                for(let j=0; j<=9; j++) {
+                    let key = `${i}-${j}`; let tr = document.createElement('tr');
+                    tr.innerHTML = `<td style="color:#fff; font-weight:bold; font-size: 13px;">${key}</td>
+                        <td><select id="size-${key}"><option value="BIG">BIG</option><option value="SMALL">SMALL</option></select></td>
+                        <td><input type="number" id="num-${key}" min="0" max="9" placeholder="#"></td>
+                        <td id="status-${key}" class="status-unset">UNSET</td>
+                        <td><button class="btn-publish" onclick="publishResult('${key}')">SET</button></td>`;
+                    tbody.appendChild(tr);
+                }
+            }
+        }
+
+        // PUBLISH RESULT
+        window.publishResult = async (key) => {
+            let size = document.getElementById(`size-${key}`).value; let num = document.getElementById(`num-${key}`).value.trim();
+            if(num === "" || num < 0 || num > 9) return showToast("ENTER VALID NUMBER", true);
+            let finalResult = `${size} [${num}]`;
+            await set(ref(db, `patterns/${key}`), finalResult); showToast(`FIXED: ${key} ➔ ${finalResult}`); document.getElementById(`num-${key}`).value = ""; 
+        };
+
+        // APPROVE UID
+        window.approveUID = async (uid) => {
+            let expiryDate = new Date(); expiryDate.setDate(expiryDate.getDate() + 30);
+            await set(ref(db, 'approved_uids/' + uid), expiryDate.toISOString().split('T')[0]);
+            await remove(ref(db, 'pending_requests/' + uid));
+            await set(push(ref(db, 'action_history')), { uid: uid, action: 'APPROVED', timestamp: Date.now() });
+            showToast(`UID ${uid} APPROVED!`);
+        };
+
+        // REJECT UID
+        window.rejectUID = async (uid) => { 
+            if(confirm(`Block request for UID ${uid}?`)) {
+                await remove(ref(db, 'pending_requests/' + uid)); 
+                await set(push(ref(db, 'action_history')), { uid: uid, action: 'BLOCKED', timestamp: Date.now() });
+                showToast("REQUEST BLOCKED", true);
+            }
+        };
+
+        // LOAD LIVE DATA
+        function loadData() {
+            // 🔥 2 MINUTE DELAY QUEUE LOGIC (120,000 ms) 🔥
+            onValue(ref(db, 'pending_requests'), (snapshot) => {
+                let tbody = document.getElementById('requestTableBody'); tbody.innerHTML = ""; let count = 0;
+                if(snapshot.exists()) {
+                    let requests = []; 
+                    snapshot.forEach(c => { 
+                        let data = c.val();
+                        if (Date.now() - data.timestamp >= 120000) requests.push(data); // 2 Min Check
+                    });
+                    requests.sort((a, b) => (b.is_urgent === true) - (a.is_urgent === true));
+                    requests.forEach(data => {
+                        count++; let isUrgent = data.is_urgent;
+                        let rowClass = isUrgent ? "row-urgent" : "";
+                        let badge = isUrgent ? `<span class="badge-urgent">URGENT</span>` : `<span class="badge-normal">WAITING</span>`;
+                        tbody.innerHTML += `<tr class="${rowClass}"><td style="color:#ffd700; font-size:13px; font-weight:bold;">${data.uid}</td><td>${badge}</td><td style="color: #aaa;">${formatDateTime(data.timestamp).split(' ')[1]}</td><td><button class="btn-approve" onclick="approveUID('${data.uid}')">VERIFY</button><button class="btn-reject" onclick="rejectUID('${data.uid}')">BLOCK</button></td></tr>`;
+                    });
+                }
+                if(count === 0) tbody.innerHTML = `<tr><td colspan="4" style="color: #555;">NO PENDING REQUESTS</td></tr>`;
+                document.getElementById('statReqs').innerText = count;
+            });
+
+            // HISTORY SYNC
+            onValue(ref(db, 'action_history'), (snapshot) => {
+                let tbody = document.getElementById('historyTableBody'); tbody.innerHTML = "";
+                let appCount = 0; let blkCount = 0; globalHistoryData = [];
+                if(snapshot.exists()) {
+                    snapshot.forEach(c => { globalHistoryData.push(c.val()); });
+                    globalHistoryData.sort((a, b) => b.timestamp - a.timestamp);
+                    globalHistoryData.forEach(data => {
+                        if(data.action === 'APPROVED') appCount++; if(data.action === 'BLOCKED') blkCount++;
+                        let badgeClass = data.action === 'APPROVED' ? 'badge-success' : 'badge-danger';
+                        tbody.innerHTML += `<tr class="hist-row"><td class="hist-uid" style="color:#fff;">${data.uid}</td><td><span class="${badgeClass}">${data.action}</span></td><td style="color: #888;">${formatDateTime(data.timestamp)}</td></tr>`;
+                    });
+                } else { tbody.innerHTML = `<tr><td colspan="3" style="color:#555;">No history available</td></tr>`; }
+                document.getElementById('statApproved').innerText = appCount; document.getElementById('statBlocked').innerText = blkCount;
+            });
+
+            // LIVE PATTERN SYNC
+            onValue(ref(db, 'patterns'), (snap) => {
+                let count = 0; 
+                for(let i=0; i<=9; i++) { for(let j=0; j<=9; j++) { let st = document.getElementById(`status-${i}-${j}`); if(st){ st.innerText = "UNSET"; st.className = "status-unset"; } }}
+                if(snap.exists()) { snap.forEach(c => { count++; let statCell = document.getElementById(`status-${c.key}`); if(statCell) { statCell.innerText = c.val(); statCell.className = "status-live"; } }); }
+                document.getElementById('statPatterns').innerText = count + "/100";
+            });
+        }
+
+        // HISTORY SEARCH
+        window.filterHistory = () => {
+            let input = document.getElementById("searchInput").value.toLowerCase(); let rows = document.querySelectorAll(".hist-row");
+            rows.forEach(row => { let uidText = row.querySelector(".hist-uid").innerText.toLowerCase(); row.style.display = uidText.includes(input) ? "" : "none"; });
+        };
+
+        // EXPORT LOGS TO CSV
+        window.exportHistoryCSV = () => {
+            if(globalHistoryData.length === 0) return showToast("No Data to Export", true);
+            let csvContent = "data:text/csv;charset=utf-8,UID,ACTION,TIMESTAMP\n";
+            globalHistoryData.forEach(row => { csvContent += `${row.uid},${row.action},${formatDateTime(row.timestamp)}\n`; });
+            let link = document.createElement("a"); link.setAttribute("href", encodeURI(csvContent)); link.setAttribute("download", `VIP_Log_${Date.now()}.csv`);
+            document.body.appendChild(link); link.click(); link.remove();
+        };
+    </script>
+</body>
+</html>
