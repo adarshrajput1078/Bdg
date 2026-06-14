@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>BDG VIP AI TOOL</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap');
+        :root { --gold-light: #fce28b; --gold-main: #d9a036; --text-white: #f5f5f5; }
+        body, html { margin: 0; padding: 0; height: 100%; font-family: 'Poppins', sans-serif; background-color: #121212; color: var(--text-white); overflow: hidden; display: flex; flex-direction: column; }
+        
+        #top-panel { height: 22%; width: 100%; background: linear-gradient(180deg, #24252a 0%, #15161a 100%); border-bottom: 2px solid var(--gold-main); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 10; position: relative; padding: 5px; box-shadow: 0 4px 15px rgba(0,0,0,0.8); transition: all 0.3s ease;}
+        
+        .top-header { width: 100%; max-width: 450px; display: flex; justify-content: space-between; align-items: center; padding: 2px 10px; box-sizing: border-box; border-bottom: 1px solid rgba(217, 160, 54, 0.2); margin-bottom: 6px; }
+        .logo-text { font-size: 15px; font-weight: 800; color: var(--gold-light); text-transform: uppercase; letter-spacing: 1px; border-bottom: 2px solid var(--gold-main); padding-bottom: 2px; text-shadow: 0 2px 4px rgba(0,0,0,0.5);}
+        .service-btn { background: linear-gradient(180deg, #fae59f 0%, #d59b2d 100%); color: #000; font-size: 10px; font-weight: 800; padding: 4px 10px; border-radius: 12px; border: none; box-shadow: 0 2px 5px rgba(0,0,0,0.5); cursor: pointer; transition: 0.2s;}
+        .service-btn:active { transform: scale(0.95); }
+
+        #bottom-panel { height: 78%; width: 100%; background-color: #000; }
+        iframe { width: 100%; height: 100%; border: none; }
+        
+        .tool-container { width: 100%; max-width: 450px; display: flex; flex-direction: column; gap: 6px; padding: 0 10px; box-sizing: border-box;}
+        .info-row { display: flex; justify-content: space-between; font-size: 11px; background: rgba(0,0,0,0.6); padding: 6px 12px; border-radius: 6px; border: 1px solid rgba(217, 160, 54, 0.3); box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);}
+        .info-row span { color: var(--gold-light); font-weight: 800; }
+        
+        .input-row { display: flex; gap: 8px; }
+        input { flex: 1; padding: 10px; border: 1px solid #444; border-radius: 6px; text-align: center; font-size: 13px; font-family: 'Poppins', sans-serif; font-weight: 700; background: #0a0a0a; color: var(--gold-light); outline: none; transition: 0.2s; box-shadow: inset 0 2px 5px rgba(0,0,0,0.8);}
+        input:focus { border-color: var(--gold-main); box-shadow: inset 0 2px 5px rgba(0,0,0,0.8), 0 0 10px rgba(217, 160, 54, 0.5); }
+        
+        button.action-btn { padding: 10px; font-size: 13px; font-family: 'Poppins', sans-serif; font-weight: 800; cursor: pointer; border-radius: 6px; border: none; background: linear-gradient(180deg, #fbe695 0%, #dca33d 100%); color: #4a2e00; text-transform: uppercase; box-shadow: 0 4px 10px rgba(0,0,0,0.5); transition: 0.2s; text-shadow: 0 1px 1px rgba(255,255,255,0.4);}
+        button.action-btn:active { transform: translateY(2px); box-shadow: 0 1px 3px rgba(0,0,0,0.8); }
+        button.action-btn:disabled { background: #333; color: #777; cursor: not-allowed; box-shadow: none; text-shadow: none;}
+        
+        .result-box { text-align: center; font-size: 16px; font-weight: 900; color: #777; background: #050505; padding: 8px; border-radius: 6px; border: 1px solid #222; box-shadow: inset 0 2px 10px rgba(0,0,0,0.9); transition: all 0.3s ease;}
+
+        .auth-container { text-align: center; width: 100%; max-width: 450px; padding: 0 15px; box-sizing: border-box;}
+        .auth-container h3 { margin: 5px 0 12px 0; font-size: 14px; color: #ddd; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;}
+        .auth-container h3 span { color: var(--gold-light); }
+
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 100; display: none; justify-content: center; align-items: center; backdrop-filter: blur(8px); }
+        .modal-box { background: linear-gradient(180deg, #2a2a35 0%, #1a1a20 100%); border: 2px solid var(--gold-main); padding: 25px; border-radius: 12px; text-align: center; width: 85%; max-width: 320px; box-shadow: 0 15px 40px rgba(0,0,0,0.9), 0 0 20px rgba(217, 160, 54, 0.3); animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .modal-box h4 { color: var(--gold-light); margin: 0 0 12px 0; font-size: 18px; font-weight: 900; text-transform: uppercase; text-shadow: 0 2px 5px rgba(0,0,0,0.5);}
+        .modal-box p { font-size: 12px; color: #ddd; margin-bottom: 20px; line-height: 1.6; font-weight: 500;}
+        .btn-close { background: transparent; border: 2px solid var(--gold-main); color: var(--gold-light); margin-top: 5px; padding: 8px 20px; border-radius: 6px; font-weight: 800; cursor: pointer; transition: 0.2s;}
+        .btn-close:active { background: rgba(217, 160, 54, 0.2); }
+        .btn-telegram { background: linear-gradient(90deg, #0088cc, #005580); border: none; color: #fff; padding: 10px 20px; border-radius: 6px; font-weight: 800; box-shadow: 0 4px 15px rgba(0, 136, 204, 0.5); cursor: pointer; text-transform: uppercase;}
+        .btn-telegram:active { transform: scale(0.95); }
+
+        #winScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 5, 0, 0.95); z-index: 9999; display: none; flex-direction: column; justify-content: center; align-items: center; overflow: hidden; }
+        .fire-bg { position: absolute; width: 200%; height: 200%; background: radial-gradient(circle, rgba(217, 160, 54, 0.4) 0%, rgba(0,0,0,0) 60%); animation: fireSpin 4s linear infinite; z-index: -1; }
+        .win-title { font-size: 50px; font-weight: 900; color: #fff; text-shadow: 0 0 20px var(--gold-main), 0 0 40px #ff9800; margin: 0; animation: winZoom 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards, pulseGold 1.5s infinite alternate; }
+        .win-details { background: linear-gradient(180deg, #2a2210 0%, #110d05 100%); border: 2px solid var(--gold-main); padding: 20px 40px; border-radius: 12px; margin-top: 25px; text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.9); animation: slideUp 0.8s ease-out forwards; }
+        .win-details p { margin: 5px 0; font-weight: 700; font-size: 15px; color: #ccc; }
+        .win-details span { color: var(--gold-light); font-size: 28px; font-weight: 900; text-shadow: 0 0 15px rgba(217, 160, 54, 0.6);}
+
+        @keyframes popIn { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        @keyframes fireSpin { 0% { transform: rotate(0deg) scale(1); } 50% { transform: rotate(180deg) scale(1.1); } 100% { transform: rotate(360deg) scale(1); } }
+        @keyframes winZoom { 0% { transform: scale(0); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        @keyframes pulseGold { 0% { text-shadow: 0 0 10px #ff9800; } 100% { text-shadow: 0 0 40px var(--gold-main), 0 0 60px #ffeb3b; } }
+        @keyframes slideUp { 0% { transform: translateY(50px); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <div id="uidModal" class="modal-overlay">
+        <div class="modal-box">
+            <h4 id="modalTitle">SYSTEM ALERT</h4>
+            <p id="modalMsg">Initializing...</p>
+            <button id="modalActionBtn" class="btn-close" onclick="closeModal()">OKAY</button>
+        </div>
+    </div>
+
+    <div id="winScreen">
+        <div class="fire-bg"></div>
+        <h1 class="win-title">JACKPOT WIN!</h1>
+        <div class="win-details">
+            <p>PERIOD: <span id="winPeriod">---</span></p>
+            <p>RESULT: <span id="winResult">---</span></p>
+        </div>
+        <p style="font-size: 12px; color: #888; margin-top: 30px; cursor: pointer; font-weight: 600;" onclick="document.getElementById('winScreen').style.display='none'">[ TAP TO CLOSE ]</p>
+    </div>
+
+    <div id="top-panel">
+        <div class="top-header">
+            <div class="logo-text">BDG VIP AI</div>
+            <button class="service-btn" onclick="openSupport()">🎧 Support</button>
+        </div>
+
+        <div id="authScreen" class="auth-container">
+            <h3>Account <span>Verification</span></h3>
+            <div class="input-row">
+                <input type="text" id="uidInput" placeholder="Enter VIP UID">
+                <button id="authBtn" class="action-btn" onclick="checkUID()" style="width: 35%;">Verify</button>
+            </div>
+        </div>
+
+        <div id="toolScreen" class="tool-container hidden">
+            <div class="info-row">
+                <div>PERIOD: <span id="displayPeriod">SYNCING...</span></div>
+                <div>TIME: <span id="displayTimer" style="color:#ff2a2a;">00:00</span></div>
+            </div>
+            <div class="input-row" style="margin-top: 4px;">
+                <input type="number" id="num1" placeholder="N-1" min="0" max="9">
+                <input type="number" id="num2" placeholder="N-2" min="0" max="9">
+                <button id="analyzeBtn" class="action-btn" onclick="runExploit()" style="width: 30%;">HACK</button>
+            </div>
+            <div id="predictionDisplay" class="result-box" style="margin-top: 4px;">AWAITING DATA...</div>
+        </div>
+    </div>
+
+    <div id="bottom-panel">
+        <iframe id="gameIframe" src="https://bdg5.cc//#/register?invitationCode=167672592385"></iframe>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, get, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        // TERA FINAL CONFIGURATION SAHI URL KE SATH
+        const firebaseConfig = {
+            apiKey: "AIzaSyBFdvXN8SAy77EDQp5HNykO5z2Wa0W8sb0",
+            authDomain: "bdgrocky.firebaseapp.com",
+            databaseURL: "https://bdgrocky-default-rtdb.asia-southeast1.firebasedatabase.app", 
+            projectId: "bdgrocky",
+            storageBucket: "bdgrocky.firebasestorage.app",
+            messagingSenderId: "527135073335",
+            appId: "1:527135073335:web:d293fc9570df64a5a54bb2"
+        };
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        let dynamicTelegramLink = "https://t.me/";
+        let dynamicSupportLink = "https://t.me/";
+
+        onValue(ref(db, 'settings/telegram_link'), (snap) => { if(snap.exists()) dynamicTelegramLink = snap.val(); });
+        onValue(ref(db, 'settings/support_link'), (snap) => { if(snap.exists()) dynamicSupportLink = snap.val(); });
+        onValue(ref(db, 'settings/active_link'), (snap) => { if(snap.exists() && snap.val() !== "") document.getElementById('gameIframe').src = snap.val().trim(); });
+
+        window.openSupport = () => { window.open(dynamicSupportLink, '_blank'); };
+
+        onValue(ref(db, 'settings/maintenance'), (snapshot) => {
+            if (snapshot.exists() && snapshot.val() === true) {
+                document.body.innerHTML = `
+                    <div style="height: 100vh; width: 100vw; background: #050505; display: flex; flex-direction: column; justify-content: center; align-items: center; color: #ff2a2a; font-family: 'Poppins', sans-serif;">
+                        <h1 style="font-size: 40px; text-shadow: 0 0 30px #ff2a2a; margin:0; font-weight:900;">🛑 SHUTDOWN</h1>
+                        <p style="color: #aaa; font-size: 14px; margin-top:15px; font-weight:600;">Server is under maintenance.</p>
+                    </div>`;
+            }
+        });
+
+        function showModal(title, msg, isTelegram = false) {
+            document.getElementById('modalTitle').innerText = title;
+            document.getElementById('modalMsg').innerHTML = msg;
+            let btn = document.getElementById('modalActionBtn');
+            if(isTelegram) {
+                btn.className = "btn-telegram"; btn.innerText = "✈️ TELEGRAM ADMIN"; 
+                btn.onclick = () => window.open(dynamicTelegramLink, '_blank');
+            } else {
+                btn.className = "btn-close"; btn.innerText = "OKAY"; btn.onclick = closeModal;
+            }
+            document.getElementById('uidModal').style.display = 'flex';
+        }
+        window.closeModal = () => { document.getElementById('uidModal').style.display = 'none'; };
+
+        function getDeviceID() {
+            let did = localStorage.getItem('vip_device_id');
+            if(!did) { did = 'DEV-' + Math.random().toString(36).substr(2, 9) + Date.now().toString(36).substr(-4); localStorage.setItem('vip_device_id', did); }
+            return did;
+        }
+
+        window.checkUID = async () => {
+            let uid = document.getElementById('uidInput').value.trim();
+            if(!uid) return showModal("ERROR", "Please enter a valid UID.", false);
+            let btn = document.getElementById('authBtn'); btn.innerText = "WAIT..."; btn.disabled = true;
+
+            try {
+                let approvedSnap = await get(ref(db, 'approved_uids/' + uid));
+                if(approvedSnap.exists()) {
+                    let localDeviceID = getDeviceID();
+                    let bindingSnap = await get(ref(db, 'device_bindings/' + uid));
+
+                    if(!bindingSnap.exists()) {
+                        await set(ref(db, 'device_bindings/' + uid), localDeviceID);
+                    } else if (bindingSnap.val() !== localDeviceID) {
+                        btn.innerText = "VERIFY"; btn.disabled = false;
+                        showModal("🚨 DEVICE LOCKED", "This UID is permanently bound to another device.<br><br><i>Multiple devices are strictly prohibited!</i>", false);
+                        return;
+                    }
+
+                    document.getElementById('authScreen').classList.add('hidden');
+                    document.getElementById('toolScreen').classList.remove('hidden');
+                    startPeriodTimer();
+                    return;
+                }
+
+                btn.innerText = "VERIFY"; btn.disabled = false;
+                showModal("⛔ ACCESS DENIED", "Your UID is not registered for VIP access.<br><br>Please contact Admin on Telegram to activate your account.", true);
+
+            } catch (error) {
+                btn.innerText = "VERIFY"; btn.disabled = false; showModal("NETWORK ERROR", "Unable to connect to secure server.", false);
+            }
+        };
+
+        let currentPeriod = "";
+        function startPeriodTimer() {
+            setInterval(() => {
+                let now = new Date(); let mins = now.getUTCMinutes(); let hrs = now.getUTCHours();
+                currentPeriod = `${now.getUTCFullYear()}${String(now.getUTCMonth()+1).padStart(2,'0')}${String(now.getUTCDate()).padStart(2,'0')}1000${10001 + (hrs * 60) + mins}`;
+                let remSec = 60 - now.getUTCSeconds(); if(remSec === 60) remSec = 0;
+                document.getElementById('displayPeriod').innerText = currentPeriod; document.getElementById('displayTimer').innerText = `00:${String(remSec).padStart(2,'0')}`;
+            }, 1000);
+        }
+
+        window.runExploit = async () => {
+            let n1 = document.getElementById('num1').value; let n2 = document.getElementById('num2').value;
+            let resDisplay = document.getElementById('predictionDisplay'); let btn = document.getElementById('analyzeBtn');
+            if(n1 === "" || n2 === "") return showModal("WARNING", "Please enter N-1 and N-2 values.", false);
+
+            btn.disabled = true; btn.innerText = "..."; resDisplay.innerText = "ANALYZING..."; resDisplay.style.color = "#888"; resDisplay.style.textShadow = "none";
+
+            try {
+                const pSnap = await get(ref(db, `patterns/${n1}-${n2}`)); 
+                setTimeout(() => {
+                    btn.disabled = false; btn.innerText = "HACK";
+                    if(pSnap.exists()) {
+                        resDisplay.innerText = pSnap.val(); resDisplay.style.color = "var(--gold-main)"; resDisplay.style.textShadow = "0 0 10px rgba(217,160,54,0.4)";
+                    } else { resDisplay.innerText = "NOT FOUND"; resDisplay.style.color = "#ff2a2a"; }
+                }, 1200); 
+            } catch (e) { btn.disabled = false; }
+        };
+
+        let lastWinTime = 0;
+        onValue(ref(db, 'live_events/win_trigger'), (snapshot) => {
+            if (snapshot.exists()) {
+                let data = snapshot.val();
+                if (data.timestamp > lastWinTime) {
+                    lastWinTime = data.timestamp;
+                    document.getElementById('winPeriod').innerText = data.period; document.getElementById('winResult').innerText = data.result;
+                    let winScreen = document.getElementById('winScreen'); winScreen.style.display = 'flex';
+                    setTimeout(() => { winScreen.style.display = 'none'; }, 7000); 
+                }
+            }
+        });
+    </script>
+</body>
+</html>
