@@ -1,240 +1,515 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VIP SIKKIM | ADMIN</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>DEV PANNEL | ADMIN QUANTUM CORE</title>
+    
+    <!-- High-End Corporate & Terminal Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap');
-        body { margin: 0; padding: 15px; font-family: 'Poppins', sans-serif; background: #050505; color: white; display: flex; flex-direction: column; align-items: center; overflow-x: hidden; }
-        .container { background: #111; padding: 20px; border-radius: 10px; width: 100%; max-width: 650px; border: 1px solid rgba(0, 255, 204, 0.3); margin-bottom: 20px; box-shadow: 0 5px 25px rgba(0,0,0,0.8); box-sizing: border-box; }
-        h2 { color: #fff; text-align: center; font-weight: 800; margin-top: 0; border-bottom: 1px solid #222; padding-bottom: 10px; letter-spacing: 1px;}
-        h2 span { color: #00ffcc; text-shadow: 0 0 10px #00ffcc; }
-        h3 { color: #ffd700; font-size: 14px; margin-top: 0; letter-spacing: 1px; text-transform: uppercase; display: flex; justify-content: space-between; align-items: center;}
-        
-        .stats { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; width: 100%; max-width: 650px; }
-        .stat-box { flex: 1 1 calc(50% - 10px); background: #151515; padding: 15px 5px; border-radius: 8px; text-align: center; border: 1px solid #222; }
-        .stat-num { font-size: 22px; font-weight: 800; color: #fff; }
-        .stat-label { font-size: 10px; color: #888; text-transform: uppercase; font-weight: bold; margin-top: 5px;}
+        /* ==========================================================================
+           1. STEALTH & LUXURY VARIABLES (V60 THEME)
+           ========================================================================== */
+        :root { 
+            --accent: #d4af37; /* Luxury Muted Gold */
+            --bg-dark: #000000; 
+            --panel-bg: #050505;
+            --border-color: #1a1a1a;
+            --border-focus: #333333;
+            
+            --success: #00e676; /* Sharp Tech Green */
+            --danger: #ff2a55; /* Crisp Red */
+            --warning: #ffcc00;
+            
+            --text-main: #ffffff;
+            --text-muted: #666666;
+            
+            --font-ui: 'Inter', sans-serif;
+            --font-data: 'Space Mono', monospace;
+            --sidebar-width: 80px;
+        }
 
-        .table-wrap { max-height: 350px; overflow-y: auto; background: #0a0a0a; border-radius: 8px; border: 1px solid #222; margin-bottom: 10px;}
-        table { width: 100%; border-collapse: collapse; font-size: 11px;}
-        th, td { border-bottom: 1px solid #222; padding: 10px 5px; text-align: center; vertical-align: middle;}
-        th { background: #151515; color: #888; position: sticky; top: 0; z-index: 2;}
-        
-        .search-bar, td select, td input[type="number"], input.live-input, #adminPass { width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #333; background: #050505; color: #00ffcc; font-family: 'Poppins', sans-serif; box-sizing: border-box; text-align: center; font-size: 12px; margin-bottom: 10px; font-weight:600;}
-        td select, td input[type="number"] { padding: 6px; font-size:11px; margin-bottom: 0;}
-        input:focus, select:focus { border-color: #00ffcc; outline: none; }
-        
-        button { padding: 8px 15px; font-size: 11px; font-family: 'Poppins', sans-serif; font-weight: 800; cursor: pointer; border-radius: 6px; border: none; text-transform: uppercase; transition: 0.2s;}
-        button:active { transform: scale(0.95); }
-        .btn-publish { background: #00ffcc; color: #000; width: 100%; padding: 12px;}
-        .btn-warn { background: #ff9800; color: #000; }
-        .btn-danger { background: #ff2a2a; color: #fff; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: var(--font-ui);}
+        body { background-color: var(--bg-dark); color: var(--text-main); display: flex; height: 100vh; overflow: hidden;}
 
-        .status-live { color: #00ffcc; font-weight: bold;} .status-unset { color: #555; }
-        #toast { position: fixed; bottom: -50px; left: 50%; transform: translateX(-50%); background: #0a0a0a; color: white; padding: 12px 25px; border-radius: 6px; font-size: 12px; font-weight: bold; border-left: 3px solid #00ffcc; transition: 0.4s; z-index: 1000; box-shadow: 0 5px 15px rgba(0,0,0,0.9);}
-        #toast.show { bottom: 30px; }
+        /* ==========================================================================
+           2. SIDEBAR NAVIGATION
+           ========================================================================== */
+        .sidebar { 
+            width: var(--sidebar-width); background: var(--panel-bg); 
+            border-right: 1px solid var(--border-color); display: flex; 
+            flex-direction: column; align-items: center; padding: 25px 0; z-index: 10;
+        }
         
-        .hidden { display: none !important; }
-        .dashboard-active { display: flex !important; flex-direction: column; align-items: center; width: 100%; }
-        .flex-row { display: flex; gap: 10px; width: 100%; align-items: center; margin-bottom: 10px;}
+        .nav-brand { font-size: 24px; color: var(--accent); margin-bottom: 40px; font-weight: 900;}
+
+        .nav-btn { 
+            width: 45px; height: 45px; border-radius: 2px; background: transparent; 
+            border: 1px solid transparent; color: var(--text-muted); font-size: 18px; 
+            cursor: pointer; transition: all 0.2s ease; margin-bottom: 15px; 
+            display: flex; justify-content: center; align-items: center;
+        }
+        
+        .nav-btn.active { background: #111; border-color: var(--accent); color: var(--accent); }
+        .nav-btn:hover:not(.active) { color: #fff; background: rgba(255,255,255,0.05); }
+
+        /* ==========================================================================
+           3. MAIN CONTENT WORKSPACE
+           ========================================================================== */
+        .main-content { 
+            flex: 1; overflow-y: auto; padding: 30px; 
+            background: radial-gradient(circle at top right, #0a0a0a 0%, var(--bg-dark) 100%); 
+            scrollbar-width: none; position: relative;
+        }
+        .main-content::-webkit-scrollbar { display: none; }
+        
+        .tab-panel { display: none; animation: fadeIn 0.3s ease forwards; max-width: 1100px; margin: 0 auto;}
+        .tab-panel.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .page-header { 
+            font-family: var(--font-ui); font-size: 24px; font-weight: 900; margin-bottom: 25px; 
+            text-transform: uppercase; border-bottom: 1px solid var(--border-color); padding-bottom: 15px; color: #fff; letter-spacing: 2px;
+        }
+        .page-header i { color: var(--accent); margin-right: 12px;}
+
+        /* ==========================================================================
+           4. BRUTALIST PANELS & FORMS
+           ========================================================================== */
+        .glass-panel { 
+            background: var(--panel-bg); border: 1px solid var(--border-color); 
+            border-radius: 2px; padding: 25px; margin-bottom: 25px; position: relative;
+        }
+        
+        .panel-title { 
+            font-family: var(--font-data); font-size: 13px; color: #fff; 
+            margin-bottom: 20px; font-weight: 700; letter-spacing: 2px; display: flex; align-items: center; gap: 10px;
+        }
+        .panel-title i { color: var(--accent); }
+
+        .input-group { margin-bottom: 20px;}
+        .input-group label { display: block; font-family: var(--font-data); font-size: 10px; color: var(--text-muted); margin-bottom: 8px; letter-spacing: 1px; text-transform: uppercase;}
+        
+        .form-control { 
+            width: 100%; background: #0a0a0a; border: 1px solid var(--border-color); color: #fff; 
+            padding: 14px; border-radius: 2px; font-family: var(--font-data); font-size: 13px; outline: none; transition: 0.2s;
+        }
+        .form-control:focus { border-color: var(--accent); background: #0f0f0f;}
+        
+        .btn-massive { 
+            width: 100%; padding: 14px; background: #fff; color: #000; border: none; border-radius: 2px; 
+            font-family: var(--font-ui); font-weight: 900; font-size: 12px; cursor: pointer; text-transform: uppercase; letter-spacing: 2px; transition: 0.1s;
+        }
+        .btn-massive:active { background: #ccc; }
+        .btn-danger { background: var(--danger); color: #fff; }
+        .btn-danger:active { background: #cc0033; }
+        .btn-warning { background: var(--accent); color: #000; }
+
+        /* ==========================================================================
+           5. NODE MATRIX (UID MANAGEMENT)
+           ========================================================================== */
+        .uid-card { 
+            background: #0a0a0a; border: 1px solid var(--border-color); border-left: 3px solid var(--text-muted); 
+            border-radius: 2px; padding: 20px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; transition: 0.2s;
+        }
+        .uid-card:hover { border-color: #333; }
+        
+        /* Status Colors */
+        .uid-card.PENDING { border-left-color: var(--accent); background: #0f0a00;}
+        .uid-card.ACTIVE { border-left-color: var(--success); }
+        .uid-card.BANNED { border-left-color: var(--danger); opacity: 0.6;}
+
+        .uid-info { flex: 1; }
+        .uid-info h2 { font-family: var(--font-data); font-size: 18px; color: #fff; margin-bottom: 6px; letter-spacing: 2px;}
+        .uid-info p { font-size: 11px; color: var(--text-muted); font-weight: 600; letter-spacing: 1px; margin-bottom: 8px; font-family: var(--font-data);}
+        
+        .vip-badge { font-family: var(--font-ui); font-size: 9px; font-weight: 800; background: rgba(212,175,55,0.1); color: var(--accent); border: 1px solid var(--accent); padding: 3px 6px; border-radius: 2px; display: inline-block; margin-right: 8px; letter-spacing: 1px;}
+        .device-tag { font-size: 9px; color: #fff; background: #222; padding: 3px 6px; border-radius: 2px; display: inline-block; border: 1px solid #444; font-family: var(--font-data);}
+        
+        /* Actions */
+        .uid-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: flex-end;}
+        .uid-actions select { background: #000; border: 1px solid var(--border-color); color: #fff; padding: 10px; border-radius: 2px; outline: none; font-family: var(--font-data); font-size: 11px;}
+        .uid-actions select:focus { border-color: var(--accent); }
+        
+        .action-btn { padding: 10px 15px; border: none; border-radius: 2px; font-family: var(--font-ui); font-weight: 800; cursor: pointer; font-size: 11px; letter-spacing: 1px; transition: 0.1s;}
+        .action-btn:active { transform: scale(0.97); }
+        .btn-appr { background: var(--success); color: #000; }
+        .btn-ban { background: var(--danger); color: #fff; }
+        .btn-del { background: #111; color: #fff; border: 1px solid #333;}
+
+        .empty-state { text-align: center; color: var(--text-muted); font-family: var(--font-data); padding: 50px 20px; font-size: 12px; letter-spacing: 2px; text-transform: uppercase;}
+
+        /* ==========================================================================
+           6. TOAST NOTIFICATIONS
+           ========================================================================== */
+        #toast { 
+            position: fixed; top: -100px; left: 50%; transform: translateX(-50%); background: #fff; 
+            border-radius: 2px; color: #000; font-family: var(--font-data); font-size: 11px; font-weight: 700; 
+            z-index: 99999; transition: top 0.3s ease; text-transform: uppercase; padding: 12px 24px; box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            display: flex; align-items: center; gap: 10px;
+        }
+        #toast.show { top: 30px; }
+        #toast.error { background: var(--danger); color: #fff; }
+
+        @media (max-width: 800px) {
+            .uid-card { flex-direction: column; align-items: flex-start; gap: 15px;}
+            .uid-actions { width: 100%; justify-content: flex-start;}
+        }
     </style>
 </head>
 <body>
 
-    <div id="toast">MSG</div>
-
-    <div class="container" id="loginScreen" style="margin-top: 100px; max-width: 400px;">
-        <h2>ADMIN <span>LOGIN</span></h2>
-        <input type="password" id="adminPass" placeholder="ENTER ADMIN PASSWORD">
-        <button class="btn-publish" onclick="loginAdmin()">AUTHENTICATE</button>
+    <!-- SIDEBAR NAVIGATION -->
+    <div class="sidebar">
+        <div class="nav-brand"><i class="fa-solid fa-cube"></i></div>
+        <button class="nav-btn active" onclick="AdminCore.switchTab('tabUids')" title="Node Matrix"><i class="fa-solid fa-network-wired"></i></button>
+        <button class="nav-btn" onclick="AdminCore.switchTab('tabComm')" title="Command Injection"><i class="fa-solid fa-terminal"></i></button>
+        <button class="nav-btn" onclick="AdminCore.switchTab('tabConfig')" title="System Architecture"><i class="fa-solid fa-sliders"></i></button>
     </div>
 
-    <div id="dashboard" class="hidden">
-        <h2>ADMIN <span>TERMINAL</span></h2>
+    <!-- MAIN WORKSPACE -->
+    <div class="main-content">
+        <div id="toast"><i class="fa-solid fa-check"></i> <span id="toastMsg">SYSTEM LOG UPDATED</span></div>
 
-        <div class="stats">
-            <div class="stat-box" style="border-bottom: 2px solid #00ffcc;"><div class="stat-num" id="statPatterns">0</div><div class="stat-label">LIVE RESULTS</div></div>
-            <div class="stat-box" style="border-bottom: 2px solid #0088cc;"><div class="stat-num" id="statApproved">0</div><div class="stat-label">ACTIVE USERS</div></div>
-        </div>
+        <!-- ==================================================================
+             TAB 1: NODE MATRIX (UID / DEPOSIT MANAGEMENT)
+             ================================================================== -->
+        <div class="tab-panel active" id="tabUids">
+            <div class="page-header"><i class="fa-solid fa-network-wired"></i> NODE MATRIX</div>
+            
+            <div class="glass-panel" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+                <div style="font-family: var(--font-data); color: var(--text-muted); font-size: 10px; line-height: 1.6; text-transform: uppercase;">
+                    <strong style="color: var(--accent);">SECURITY PROTOCOL:</strong><br>
+                    Verify payment gateway logs before approving <span style="color:#fff;">[PENDING]</span> nodes.
+                </div>
+                <button class="action-btn btn-del" onclick="AdminCore.purgeDatabase()" style="padding: 12px 25px;">
+                    <i class="fa-solid fa-trash"></i> PURGE TRASH DATA
+                </button>
+            </div>
 
-        <div class="container" style="border-color: #aa00ff; box-shadow: 0 0 15px rgba(170, 0, 255, 0.2);">
-            <h3 style="color:#aa00ff;">⚙️ SYSTEM SETTINGS</h3>
-            <p style="font-size: 10px; color: #888; margin-top:0;">Update links shown in the user tool directly from here.</p>
-            <div class="flex-row">
-                <input type="text" id="teleLinkInput" class="live-input" placeholder="Telegram URL (Verification)" style="margin:0;">
-                <button class="btn-publish" style="background:#aa00ff; color:#fff; width:40%; padding:10px;" onclick="updateLink('telegram_link', 'teleLinkInput')">UPDATE</button>
-            </div>
-            <div class="flex-row">
-                <input type="text" id="supportLinkInput" class="live-input" placeholder="Support URL (Headphone Icon)" style="margin:0;">
-                <button class="btn-publish" style="background:#aa00ff; color:#fff; width:40%; padding:10px;" onclick="updateLink('support_link', 'supportLinkInput')">UPDATE</button>
-            </div>
-            <div class="flex-row" style="margin-top: 10px; border-top: 1px solid #333; padding-top: 10px;">
-                <input type="text" id="newAdminPassInput" class="live-input" placeholder="Set New Admin Password" style="margin:0;">
-                <button class="btn-publish" style="background:#ff2a2a; color:#fff; width:40%; padding:10px;" onclick="updateLink('admin_password', 'newAdminPassInput')">CHANGE PASS</button>
-            </div>
-        </div>
-
-        <div class="container" style="border-color: #ff9800; box-shadow: 0 0 15px rgba(255, 152, 0, 0.2);">
-            <h3 style="color:#ff9800;">🎥 LIVE JACKPOT ANIMATION</h3>
-            <p style="font-size: 10px; color: #888; margin-top:0;">Show a winning animation on all user screens instantly.</p>
-            <div style="display: flex; gap: 8px; margin-bottom: 10px;">
-                <input type="text" id="winPeriodInput" class="live-input" placeholder="PERIOD (e.g. 12345)" style="margin:0;">
-                <input type="text" id="winResultInput" class="live-input" placeholder="RESULT (e.g. BIG [8])" style="margin:0;">
-            </div>
-            <button class="btn-publish" style="background: #ff9800; color: #000;" onclick="sendLiveWin()">🔥 FIRE JACKPOT ON ALL SCREENS</button>
-        </div>
-
-        <div class="container" style="border-color: #0088cc;">
-            <h3 style="color:#0088cc;">✈️ MANAGE TELEGRAM USERS</h3>
-            <div style="display: flex; gap: 8px; margin-bottom: 10px;">
-                <input type="text" id="newUidInput" class="live-input" placeholder="Enter User UID" style="margin:0;">
-                <button class="btn-publish" style="background: #0088cc; color: #fff; width: 40%; padding:10px;" onclick="addTelegramUser()">+ ADD USER</button>
-            </div>
-            <div class="table-wrap" style="max-height: 250px;">
-                <table>
-                    <thead><tr><th>APPROVED UID</th><th>EXPIRY</th><th>ACTION</th></tr></thead>
-                    <tbody id="approvedUsersBody"><tr><td colspan="3" style="color:#555;">Loading...</td></tr></tbody>
-                </table>
+            <div class="glass-panel">
+                <div class="panel-title"><i class="fa-solid fa-list-ul"></i> CONNECTION REGISTRY</div>
+                <div id="uidListContainer">
+                    <div class="empty-state">SYNCING DATABANK...</div>
+                </div>
             </div>
         </div>
 
-        <div class="container">
-            <h3>📝 FIX GAME RESULTS (100 COMBINATIONS)</h3>
-            <div class="table-wrap" style="max-height: 400px;">
-                <table>
-                    <thead><tr><th style="width: 15%;">COMB</th><th style="width: 25%;">SIZE</th><th style="width: 20%;">NUM</th><th style="width: 20%;">LIVE</th><th style="width: 20%;">ACTION</th></tr></thead>
-                    <tbody id="patternTableBody"></tbody>
-                </table>
+        <!-- ==================================================================
+             TAB 2: COMMAND INJECTION (MESSAGES & FREEZE)
+             ================================================================== -->
+        <div class="tab-panel" id="tabComm">
+            <div class="page-header"><i class="fa-solid fa-terminal"></i> PAYLOAD INJECTION</div>
+            
+            <div class="glass-panel">
+                <div class="panel-title"><i class="fa-solid fa-code"></i> REMOTE COMMAND EXECUTION</div>
+                
+                <div class="input-group">
+                    <label>TARGET NODE (UID)</label>
+                    <select id="msgTarget" class="form-control">
+                        <option value="ALL">>> GLOBAL (ALL ACTIVE NODES)</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label>PAYLOAD TYPE</label>
+                    <select id="msgType" class="form-control">
+                        <option value="INFO">>> INFO: Scrolling Top Marquee</option>
+                        <option value="LOCK">>> LOCK: Freeze Decryption UI (Force Logout)</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label>PAYLOAD CONTENT (TEXT)</label>
+                    <input type="text" id="msgText" class="form-control" placeholder="e.g. Session expired. Deposit ₹1000 to re-activate.">
+                </div>
+
+                <div class="input-group">
+                    <label>EXECUTION DURATION</label>
+                    <select id="msgDuration" class="form-control">
+                        <option value="5">5 MINUTES</option>
+                        <option value="60">1 HOUR</option>
+                        <option value="999999">PERMANENT (UNTIL REVOKED)</option>
+                    </select>
+                </div>
+
+                <div style="display: flex; gap: 15px; margin-top: 30px;">
+                    <button class="btn-massive" onclick="AdminCore.sendCustomMessage()">DEPLOY PAYLOAD</button>
+                    <button class="btn-massive btn-danger" onclick="AdminCore.clearCustomMessage()">REVOKE COMMANDS</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================================================================
+             TAB 3: SYSTEM ARCHITECTURE (GLOBAL CONFIG)
+             ================================================================== -->
+        <div class="tab-panel" id="tabConfig">
+            <div class="page-header"><i class="fa-solid fa-sliders"></i> CORE ARCHITECTURE</div>
+
+            <!-- Route Mapping -->
+            <div class="glass-panel">
+                <div class="panel-title"><i class="fa-solid fa-link"></i> IFRAME ROUTE MAPPING</div>
+                <div class="input-group">
+                    <input type="text" id="gameUrlInput" class="form-control" placeholder="https://sikkim.com">
+                </div>
+                <button class="btn-massive" onclick="AdminCore.updateGameLink()">UPDATE ROUTE</button>
+            </div>
+
+            <!-- Maintenance -->
+            <div class="glass-panel" style="border-color: #330000;">
+                <div class="panel-title" style="color: var(--danger);"><i class="fa-solid fa-shield-halved"></i> GLOBAL SERVER STATUS</div>
+                <div class="input-group">
+                    <select id="sysMode" class="form-control">
+                        <option value="OPEN">>> STATUS: ONLINE (Accepting Traffic)</option>
+                        <option value="LOCKED">>> STATUS: LOCKED (Global Maintenance)</option>
+                    </select>
+                </div>
+                <button class="btn-massive btn-danger" onclick="AdminCore.updateMaintenance()">ENFORCE STATE</button>
+            </div>
+            
+            <!-- God Mode Override -->
+            <div class="glass-panel" style="border-color: #332b00;">
+                <div class="panel-title" style="color: var(--accent);"><i class="fa-solid fa-crosshairs"></i> ALGORITHM OVERRIDE (GOD MODE)</div>
+                <div class="input-group">
+                    <select id="godModeSize" class="form-control">
+                        <option value="AUTO">>> LOGIC: AUTO (Machine Calculation)</option>
+                        <option value="BIG">>> FORCE LOGIC: BIG</option>
+                        <option value="SMALL">>> FORCE LOGIC: SMALL</option>
+                        <option value="SKIP">>> FORCE LOGIC: SKIP (Volatile Market)</option>
+                    </select>
+                </div>
+                <button class="btn-massive btn-warning" onclick="AdminCore.updateGodMode()">INJECT LOGIC</button>
             </div>
         </div>
     </div>
 
+    <!-- ==========================================================================
+         FIREBASE V10 ENGINE
+         ========================================================================== -->
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, set, onValue, remove, push } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getDatabase, ref, onValue, update, remove, get } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyBFdvXN8SAy77EDQp5HNykO5z2Wa0W8sb0",
-            authDomain: "bdgrocky.firebaseapp.com",
-            databaseURL: "https://bdgrocky-default-rtdb.asia-southeast1.firebasedatabase.app", 
-            projectId: "bdgrocky",
-            storageBucket: "bdgrocky.firebasestorage.app",
-            messagingSenderId: "527135073335",
-            appId: "1:527135073335:web:d293fc9570df64a5a54bb2"
+        // CONFIG (Ensure this matches User App)
+        const FIREBASE_CONFIG = { 
+            apiKey: "AIzaSyBNj71akpefcfEtn-SQfAcx-Pgwi8sUosg", 
+            authDomain: "teamdev-88676.firebaseapp.com", 
+            databaseURL: "https://teamdev-88676-default-rtdb.asia-southeast1.firebasedatabase.app", 
+            projectId: "teamdev-88676" 
         };
-        const db = getDatabase(initializeApp(firebaseConfig));
+        const app = initializeApp(FIREBASE_CONFIG); 
+        const database = getDatabase(app);
 
-        function showToast(msg, isErr=false) { 
-            let t = document.getElementById("toast"); t.innerText = "> " + msg; 
-            t.style.borderLeftColor = isErr ? "#ff2a2a" : (isErr === 'warn' ? '#ff9800' : "#00ffcc"); 
-            t.className = "show"; setTimeout(() => t.className = "", 3000); 
-        }
+        // GLOBAL SCOPE EXPORT
+        window.AdminCore = {
+            
+            switchTab: function(tabId) {
+                document.querySelectorAll('.tab-panel').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+                document.getElementById(tabId).classList.add('active');
+                event.currentTarget.classList.add('active');
+            },
 
-        // SAFE DEFAULT PASSWORD
-        let liveAdminPass = "MASTER123";
-        
-        onValue(ref(db, 'settings/admin_password'), (snap) => { if(snap.exists()) liveAdminPass = snap.val(); });
+            showToast: function(msg, isError = false) {
+                const toast = document.getElementById('toast');
+                document.getElementById('toastMsg').innerText = msg;
+                toast.className = isError ? 'show error' : 'show';
+                setTimeout(() => toast.className = '', 3000);
+            },
 
-        window.loginAdmin = () => {
-            if(document.getElementById('adminPass').value === liveAdminPass) {
-                document.getElementById('loginScreen').classList.add('hidden');
-                document.getElementById('dashboard').classList.remove('hidden');
-                document.getElementById('dashboard').classList.add('dashboard-active');
-                generateClassicTable(); loadData(); showToast("ACCESS GRANTED");
-            } else { showToast("AUTH FAILED", true); }
-        };
+            // --- 1. NODE MATRIX LOGIC ---
+            initUidListener: function() {
+                const container = document.getElementById('uidListContainer');
+                const targetDropdown = document.getElementById('msgTarget');
 
-        window.updateLink = async (dbKey, inputId) => {
-            let val = document.getElementById(inputId).value.trim();
-            if(!val) return showToast("Enter a valid value!", true);
-            await set(ref(db, `settings/${dbKey}`), val);
-            showToast("UPDATED SUCCESSFULLY!");
-            document.getElementById(inputId).value = "";
-        };
+                onValue(ref(database, 'live_uids'), (snapshot) => {
+                    container.innerHTML = '';
+                    targetDropdown.innerHTML = '<option value="ALL">>> GLOBAL (ALL ACTIVE NODES)</option>';
 
-        window.sendLiveWin = async () => {
-            let period = document.getElementById('winPeriodInput').value.trim(); let result = document.getElementById('winResultInput').value.trim();
-            if(!period || !result) return showToast("ENTER PERIOD & RESULT!", true);
-            await set(ref(db, 'live_events/win_trigger'), { period: period, result: result, timestamp: Date.now() });
-            showToast("JACKPOT ANIMATION SENT TO ALL USERS!", 'warn');
-            document.getElementById('winPeriodInput').value = ""; document.getElementById('winResultInput').value = "";
-        };
+                    if(snapshot.exists()) {
+                        const data = snapshot.val();
+                        const uidsArray = Object.values(data).sort((a,b) => b.requestTime - a.requestTime);
+                        
+                        uidsArray.forEach(uData => {
+                            let status = uData.status;
+                            let timeRemaining = "AWAITING AUTH";
+                            let vipBadge = "";
+                            
+                            if(status === "PENDING") {
+                                vipBadge = `<span class="vip-badge">DEPOSIT CLAIMED</span><br>`;
+                            }
 
-        window.addTelegramUser = async () => {
-            let uid = document.getElementById('newUidInput').value.trim();
-            if(!uid) return showToast("Enter a valid UID!", true);
-            let d = new Date(); d.setDate(d.getDate() + 30); 
-            await set(ref(db, 'approved_uids/' + uid), d.toISOString().split('T')[0]);
-            showToast("USER SUCCESSFULLY ADDED");
-            document.getElementById('newUidInput').value = "";
-        };
+                            if(status === "ACTIVE" && uData.expiresAt) {
+                                if(Date.now() > uData.expiresAt) {
+                                    status = "EXPIRED";
+                                } else {
+                                    timeRemaining = `EXP: ${new Date(uData.expiresAt).toLocaleString()}`;
+                                }
+                            }
 
-        window.removeUser = async (uid) => {
-            if(confirm(`Remove User ${uid} completely?`)) {
-                await remove(ref(db, 'approved_uids/' + uid));
-                await remove(ref(db, 'device_bindings/' + uid)); 
-                showToast("USER REMOVED", true);
+                            if(status === "ACTIVE") {
+                                let opt = document.createElement('option');
+                                opt.value = uData.uid;
+                                opt.innerText = `>> TARGET: ${uData.uid}`;
+                                targetDropdown.appendChild(opt);
+                            }
+
+                            const card = document.createElement('div');
+                            card.className = `uid-card ${status}`;
+                            let statusColor = status === 'ACTIVE' ? 'var(--success)' : (status === 'PENDING' ? 'var(--accent)' : 'var(--danger)');
+
+                            card.innerHTML = `
+                                <div class="uid-info">
+                                    <h2>${uData.uid}</h2>
+                                    ${vipBadge}
+                                    <p>STATUS: <span style="color:${statusColor}">${status}</span> | ${timeRemaining}</p>
+                                    ${uData.deviceID ? `<span class="device-tag">HWID LINKED</span>` : ''}
+                                </div>
+                                <div class="uid-actions">
+                                    ${status !== 'ACTIVE' ? `
+                                    <select id="time_${uData.uid}">
+                                        <option value="2">2 HRS (TRIAL)</option>
+                                        <option value="12">12 HRS</option>
+                                        <option value="24" selected>24 HRS (VIP)</option>
+                                        <option value="720">30 DAYS</option>
+                                        <option value="876000">LIFETIME</option>
+                                    </select>
+                                    <button class="action-btn btn-appr" onclick="AdminCore.approveUID('${uData.uid}')">GRANT ACCESS</button>
+                                    ` : `
+                                    <button class="action-btn btn-ban" onclick="AdminCore.banUID('${uData.uid}')">REVOKE ACCESS</button>
+                                    `}
+                                    <button class="action-btn btn-del" onclick="AdminCore.deleteUID('${uData.uid}')">UNBIND</button>
+                                </div>
+                            `;
+                            container.appendChild(card);
+                        });
+                    } else { 
+                        container.innerHTML = '<div class="empty-state">0 NODES DETECTED</div>'; 
+                    }
+                });
+            },
+
+            approveUID: function(uid) {
+                const hours = parseInt(document.getElementById(`time_${uid}`).value);
+                const expiryTime = Date.now() + (hours * 3600000);
+                update(ref(database, `live_uids/${uid}`), { status: "ACTIVE", expiresAt: expiryTime });
+                this.showToast(`ACCESS GRANTED: ${uid}`);
+            },
+            
+            banUID: function(uid) { 
+                if(confirm(`Revoke access for UID ${uid}?`)) { 
+                    update(ref(database, `live_uids/${uid}`), { status: "BANNED" }); 
+                    this.showToast(`ACCESS REVOKED: ${uid}`, true); 
+                } 
+            },
+            
+            deleteUID: function(uid) { 
+                if(confirm(`Delete UID ${uid} and unbind hardware?`)) { 
+                    remove(ref(database, `live_uids/${uid}`)); 
+                    this.showToast(`HARDWARE UNBOUND: ${uid}`); 
+                } 
+            },
+            
+            purgeDatabase: async function() {
+                if(!confirm("Clear all Banned/Expired records?")) return;
+                try {
+                    const snap = await get(ref(database, 'live_uids'));
+                    if(snap.exists()) {
+                        let updates = {};
+                        Object.keys(snap.val()).forEach(uid => { 
+                            let u = snap.val()[uid]; 
+                            if(u.status === "BANNED" || (u.status === "ACTIVE" && u.expiresAt < Date.now())) {
+                                updates[uid] = null; 
+                            }
+                        });
+                        await update(ref(database, 'live_uids'), updates); 
+                        this.showToast("DATABANK PURGED");
+                    }
+                } catch(e) { this.showToast("PURGE FAILED", true); }
+            },
+
+            // --- 2. PAYLOAD INJECTION ---
+            sendCustomMessage: async function() {
+                const target = document.getElementById('msgTarget').value;
+                const type = document.getElementById('msgType').value;
+                const text = document.getElementById('msgText').value.trim();
+                const durationMins = parseInt(document.getElementById('msgDuration').value);
+                
+                if(!text) return this.showToast("PAYLOAD EMPTY", true);
+                
+                const payload = { type: type, text: text, expiresAt: Date.now() + (durationMins * 60000) };
+
+                try {
+                    if(target === "ALL") {
+                        const snap = await get(ref(database, 'live_uids'));
+                        if(snap.exists()) {
+                            const updates = {};
+                            Object.keys(snap.val()).forEach(uid => { updates[`${uid}/customMsg`] = payload; });
+                            await update(ref(database, 'live_uids'), updates); 
+                            this.showToast("GLOBAL PAYLOAD DEPLOYED");
+                        }
+                    } else { 
+                        await update(ref(database, `live_uids/${target}/customMsg`), payload); 
+                        this.showToast("DIRECT PAYLOAD DEPLOYED"); 
+                    }
+                    document.getElementById('msgText').value = ""; 
+                } catch(e) { this.showToast("DEPLOYMENT FAILED", true); }
+            },
+
+            clearCustomMessage: async function() {
+                const target = document.getElementById('msgTarget').value;
+                try {
+                    if(target === "ALL") {
+                        const snap = await get(ref(database, 'live_uids'));
+                        if(snap.exists()) {
+                            const updates = {}; 
+                            Object.keys(snap.val()).forEach(uid => { updates[`${uid}/customMsg`] = null; });
+                            await update(ref(database, 'live_uids'), updates); 
+                            this.showToast("ALL PAYLOADS REVOKED");
+                        }
+                    } else { 
+                        await update(ref(database, `live_uids/${target}`), { customMsg: null }); 
+                        this.showToast("NODE PAYLOAD REVOKED"); 
+                    }
+                } catch(e) { this.showToast("REVOCATION FAILED", true); }
+            },
+
+            // --- 3. SYSTEM ARCHITECTURE ---
+            initSystemListeners: function() {
+                get(ref(database, 'systemConfig/links/gameUrl')).then(s => { 
+                    if(s.exists()) document.getElementById('gameUrlInput').value = s.val(); 
+                });
+                get(ref(database, 'systemConfig/maintenance/mode')).then(s => { 
+                    if(s.exists()) document.getElementById('sysMode').value = s.val(); 
+                });
+                get(ref(database, 'server/override/size')).then(s => { 
+                    if(s.exists()) document.getElementById('godModeSize').value = s.val(); 
+                });
+            },
+
+            updateGameLink: function() { 
+                update(ref(database, 'systemConfig/links'), { gameUrl: document.getElementById('gameUrlInput').value.trim() }).then(() => this.showToast("ROUTE MAPPING UPDATED")); 
+            },
+            
+            updateMaintenance: function() { 
+                update(ref(database, 'systemConfig/maintenance'), { mode: document.getElementById('sysMode').value }).then(() => this.showToast("SYSTEM STATE ENFORCED")); 
+            },
+            
+            updateGodMode: function() { 
+                update(ref(database, 'server/override'), { size: document.getElementById('godModeSize').value }).then(() => this.showToast("LOGIC INJECTED")); 
             }
         };
 
-        window.unlockDevice = async (uid) => {
-            if(confirm(`Unlock Device Lock for ${uid}? (Allows login on a new phone)`)) {
-                await remove(ref(db, 'device_bindings/' + uid));
-                showToast("DEVICE UNLOCKED", 'warn');
-            }
-        };
+        // Initialize Load
+        document.addEventListener('DOMContentLoaded', () => {
+            AdminCore.initUidListener();
+            AdminCore.initSystemListeners();
+        });
 
-        function generateClassicTable() {
-            let tbody = document.getElementById('patternTableBody'); tbody.innerHTML = "";
-            for(let i=0; i<=9; i++) {
-                for(let j=0; j<=9; j++) {
-                    let key = `${i}-${j}`; let tr = document.createElement('tr');
-                    tr.innerHTML = `<td style="color:#fff; font-weight:bold; font-size: 13px;">${key}</td>
-                        <td><select id="size-${key}"><option value="BIG">BIG</option><option value="SMALL">SMALL</option></select></td>
-                        <td><input type="number" id="num-${key}" min="0" max="9" placeholder="#"></td>
-                        <td id="status-${key}" class="status-unset">UNSET</td>
-                        <td><button class="btn-publish" style="padding: 6px; font-size: 10px;" onclick="publishResult('${key}')">SET</button></td>`;
-                    tbody.appendChild(tr);
-                }
-            }
-        }
-
-        window.publishResult = async (key) => {
-            let size = document.getElementById(`size-${key}`).value; let num = document.getElementById(`num-${key}`).value.trim();
-            if(num === "" || num < 0 || num > 9) return showToast("ENTER VALID NUMBER", true);
-            let finalResult = `${size} [${num}]`;
-            await set(ref(db, `patterns/${key}`), finalResult); showToast(`FIXED: ${key} ➔ ${finalResult}`); document.getElementById(`num-${key}`).value = ""; 
-        };
-
-        function loadData() {
-            onValue(ref(db, 'settings/telegram_link'), (snap) => { if(snap.exists()) document.getElementById('teleLinkInput').value = snap.val(); });
-            onValue(ref(db, 'settings/support_link'), (snap) => { if(snap.exists()) document.getElementById('supportLinkInput').value = snap.val(); });
-
-            onValue(ref(db, 'approved_uids'), (snapshot) => {
-                let tbody = document.getElementById('approvedUsersBody'); tbody.innerHTML = ""; let count = 0;
-                if(snapshot.exists()) {
-                    snapshot.forEach(c => {
-                        count++;
-                        tbody.innerHTML += `<tr><td style="color:#00ffcc; font-weight:bold; font-size:13px;">${c.key}</td><td style="font-size:10px; color:#aaa;">${c.val()}</td>
-                        <td>
-                            <button class="btn-warn" style="padding:4px 8px; font-size:9px; margin-bottom:4px;" onclick="unlockDevice('${c.key}')">UNLOCK DEV</button><br>
-                            <button class="btn-danger" style="padding:4px 8px; font-size:9px;" onclick="removeUser('${c.key}')">REMOVE</button>
-                        </td></tr>`;
-                    });
-                }
-                if(count === 0) tbody.innerHTML = `<tr><td colspan="3" style="color: #555;">No active users</td></tr>`;
-                document.getElementById('statApproved').innerText = count;
-            });
-
-            onValue(ref(db, 'patterns'), (snap) => {
-                let count = 0; 
-                for(let i=0; i<=9; i++) { for(let j=0; j<=9; j++) { let st = document.getElementById(`status-${i}-${j}`); if(st){ st.innerText = "UNSET"; st.className = "status-unset"; } }}
-                if(snap.exists()) { snap.forEach(c => { count++; let statCell = document.getElementById(`status-${c.key}`); if(statCell) { statCell.innerText = c.val(); statCell.className = "status-live"; } }); }
-                document.getElementById('statPatterns').innerText = count + "/100";
-            });
-        }
     </script>
 </body>
 </html>
