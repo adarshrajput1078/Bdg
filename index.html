@@ -1,247 +1,436 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>BDG VIP AI TOOL</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>DEV PANNEL | QUANTUM ENGINE</title>
+    
+    <!-- High-End Corporate & Terminal Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap');
-        :root { --gold-light: #fce28b; --gold-main: #d9a036; --text-white: #f5f5f5; }
-        body, html { margin: 0; padding: 0; height: 100%; font-family: 'Poppins', sans-serif; background-color: #121212; color: var(--text-white); overflow: hidden; display: flex; flex-direction: column; }
+        /* ==========================================================================
+           1. STEALTH & LUXURY VARIABLES
+           ========================================================================== */
+        :root { 
+            --accent: #d4af37; /* Luxury Muted Gold */
+            --bg-dark: #000000; 
+            --panel-bg: #050505;
+            --border-color: #1a1a1a;
+            
+            --success: #00e676; /* Sharp Tech Green */
+            --danger: #ff2a55; /* Crisp Red */
+            
+            --text-main: #ffffff;
+            --text-muted: #666666;
+            
+            --font-ui: 'Inter', sans-serif;
+            --font-data: 'Space Mono', monospace;
+        }
         
-        #top-panel { height: 22%; width: 100%; background: linear-gradient(180deg, #24252a 0%, #15161a 100%); border-bottom: 2px solid var(--gold-main); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 10; position: relative; padding: 5px; box-shadow: 0 4px 15px rgba(0,0,0,0.8); transition: all 0.3s ease;}
+        * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent;}
+        body, html { background-color: var(--bg-dark); font-family: var(--font-ui); overflow: hidden; height: 100vh; width: 100vw; display: flex; flex-direction: column;}
         
-        .top-header { width: 100%; max-width: 450px; display: flex; justify-content: space-between; align-items: center; padding: 2px 10px; box-sizing: border-box; border-bottom: 1px solid rgba(217, 160, 54, 0.2); margin-bottom: 6px; }
-        .logo-text { font-size: 15px; font-weight: 800; color: var(--gold-light); text-transform: uppercase; letter-spacing: 1px; border-bottom: 2px solid var(--gold-main); padding-bottom: 2px; text-shadow: 0 2px 4px rgba(0,0,0,0.5);}
-        .service-btn { background: linear-gradient(180deg, #fae59f 0%, #d59b2d 100%); color: #000; font-size: 10px; font-weight: 800; padding: 4px 10px; border-radius: 12px; border: none; box-shadow: 0 2px 5px rgba(0,0,0,0.5); cursor: pointer; transition: 0.2s;}
-        .service-btn:active { transform: scale(0.95); }
+        /* ==========================================================================
+           2. 15 / 85 FIXED SCREEN SPLIT (MINIMALIST)
+           ========================================================================== */
+        /* Top Console (Strict 15%, No Bulky Glows) */
+        .stealth-console { 
+            width: 100%; height: 15vh; min-height: 120px; 
+            background: var(--panel-bg); border-bottom: 1px solid var(--border-color); 
+            z-index: 10; position: relative; display: flex; flex-direction: column;
+        }
 
-        #bottom-panel { height: 78%; width: 100%; background-color: #000; }
-        iframe { width: 100%; height: 100%; border: none; }
-        
-        .tool-container { width: 100%; max-width: 450px; display: flex; flex-direction: column; gap: 6px; padding: 0 10px; box-sizing: border-box;}
-        .info-row { display: flex; justify-content: space-between; font-size: 11px; background: rgba(0,0,0,0.6); padding: 6px 12px; border-radius: 6px; border: 1px solid rgba(217, 160, 54, 0.3); box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);}
-        .info-row span { color: var(--gold-light); font-weight: 800; }
-        
-        .input-row { display: flex; gap: 8px; }
-        input { flex: 1; padding: 10px; border: 1px solid #444; border-radius: 6px; text-align: center; font-size: 13px; font-family: 'Poppins', sans-serif; font-weight: 700; background: #0a0a0a; color: var(--gold-light); outline: none; transition: 0.2s; box-shadow: inset 0 2px 5px rgba(0,0,0,0.8);}
-        input:focus { border-color: var(--gold-main); box-shadow: inset 0 2px 5px rgba(0,0,0,0.8), 0 0 10px rgba(217, 160, 54, 0.5); }
-        
-        button.action-btn { padding: 10px; font-size: 13px; font-family: 'Poppins', sans-serif; font-weight: 800; cursor: pointer; border-radius: 6px; border: none; background: linear-gradient(180deg, #fbe695 0%, #dca33d 100%); color: #4a2e00; text-transform: uppercase; box-shadow: 0 4px 10px rgba(0,0,0,0.5); transition: 0.2s; text-shadow: 0 1px 1px rgba(255,255,255,0.4);}
-        button.action-btn:active { transform: translateY(2px); box-shadow: 0 1px 3px rgba(0,0,0,0.8); }
-        button.action-btn:disabled { background: #333; color: #777; cursor: not-allowed; box-shadow: none; text-shadow: none;}
-        
-        .result-box { text-align: center; font-size: 16px; font-weight: 900; color: #777; background: #050505; padding: 8px; border-radius: 6px; border: 1px solid #222; box-shadow: inset 0 2px 10px rgba(0,0,0,0.9); transition: all 0.3s ease;}
+        /* Subtle noise texture, not distracting lines */
+        .console-noise {
+            position: absolute; inset: 0; pointer-events: none; z-index: 0; opacity: 0.05;
+            background-image: url('data:image/svg+xml,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E');
+        }
 
-        .auth-container { text-align: center; width: 100%; max-width: 450px; padding: 0 15px; box-sizing: border-box;}
-        .auth-container h3 { margin: 5px 0 12px 0; font-size: 14px; color: #ddd; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;}
-        .auth-container h3 span { color: var(--gold-light); }
+        /* Bottom Game (85%) */
+        .game-section { width: 100%; flex: 1; position: relative; z-index: 1; background: #000; }
+        .game-iframe { width: 100%; height: 100%; border: none; }
 
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 100; display: none; justify-content: center; align-items: center; backdrop-filter: blur(8px); }
-        .modal-box { background: linear-gradient(180deg, #2a2a35 0%, #1a1a20 100%); border: 2px solid var(--gold-main); padding: 25px; border-radius: 12px; text-align: center; width: 85%; max-width: 320px; box-shadow: 0 15px 40px rgba(0,0,0,0.9), 0 0 20px rgba(217, 160, 54, 0.3); animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        .modal-box h4 { color: var(--gold-light); margin: 0 0 12px 0; font-size: 18px; font-weight: 900; text-transform: uppercase; text-shadow: 0 2px 5px rgba(0,0,0,0.5);}
-        .modal-box p { font-size: 12px; color: #ddd; margin-bottom: 20px; line-height: 1.6; font-weight: 500;}
-        .btn-close { background: transparent; border: 2px solid var(--gold-main); color: var(--gold-light); margin-top: 5px; padding: 8px 20px; border-radius: 6px; font-weight: 800; cursor: pointer; transition: 0.2s;}
-        .btn-close:active { background: rgba(217, 160, 54, 0.2); }
-        .btn-telegram { background: linear-gradient(90deg, #0088cc, #005580); border: none; color: #fff; padding: 10px 20px; border-radius: 6px; font-weight: 800; box-shadow: 0 4px 15px rgba(0, 136, 204, 0.5); cursor: pointer; text-transform: uppercase;}
-        .btn-telegram:active { transform: scale(0.95); }
+        /* ==========================================================================
+           3. AUTHENTICATION & LOGIN (BANKING-STYLE SECURITY)
+           ========================================================================== */
+        .auth-container {
+            position: absolute; inset: 0; z-index: 20; background: rgba(0,0,0,0.98);
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            padding: 10px 20px; text-align: center;
+        }
 
-        #winScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 5, 0, 0.95); z-index: 9999; display: none; flex-direction: column; justify-content: center; align-items: center; overflow: hidden; }
-        .fire-bg { position: absolute; width: 200%; height: 200%; background: radial-gradient(circle, rgba(217, 160, 54, 0.4) 0%, rgba(0,0,0,0) 60%); animation: fireSpin 4s linear infinite; z-index: -1; }
-        .win-title { font-size: 50px; font-weight: 900; color: #fff; text-shadow: 0 0 20px var(--gold-main), 0 0 40px #ff9800; margin: 0; animation: winZoom 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards, pulseGold 1.5s infinite alternate; }
-        .win-details { background: linear-gradient(180deg, #2a2210 0%, #110d05 100%); border: 2px solid var(--gold-main); padding: 20px 40px; border-radius: 12px; margin-top: 25px; text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.9); animation: slideUp 0.8s ease-out forwards; }
-        .win-details p { margin: 5px 0; font-weight: 700; font-size: 15px; color: #ccc; }
-        .win-details span { color: var(--gold-light); font-size: 28px; font-weight: 900; text-shadow: 0 0 15px rgba(217, 160, 54, 0.6);}
+        .auth-brand { font-family: var(--font-ui); font-size: 16px; font-weight: 900; color: #fff; letter-spacing: 4px; margin-bottom: 4px; text-transform: uppercase;}
+        .auth-brand span { color: var(--accent); }
+        .auth-divider { width: 40px; height: 2px; background: var(--accent); margin-bottom: 15px;}
+        
+        .uid-input-wrapper { display: flex; width: 100%; max-width: 400px; gap: 0;}
+        .uid-input { 
+            flex: 1; background: #0a0a0a; border: 1px solid var(--border-color); border-right: none; 
+            color: #fff; font-family: var(--font-data); font-size: 13px; text-align: center; 
+            padding: 10px; outline: none; letter-spacing: 2px; border-radius: 2px 0 0 2px;
+        }
+        .uid-input:focus { border-color: #333; background: #0f0f0f;}
+        
+        .btn-auth { 
+            background: #fff; color: #000; border: none; border-radius: 0 2px 2px 0; 
+            padding: 0 20px; font-family: var(--font-ui); font-weight: 800; font-size: 11px; 
+            cursor: pointer; letter-spacing: 1px; transition: 0.2s;
+        }
+        .btn-auth:active { background: #ddd; }
+        
+        .auth-msg { font-family: var(--font-data); font-size: 9px; color: var(--accent); margin-top: 10px; text-transform: uppercase; letter-spacing: 1px;}
+        .auth-sub-msg { font-family: var(--font-ui); font-size: 10px; color: var(--text-muted); margin-top: 4px;}
 
-        @keyframes popIn { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-        @keyframes fireSpin { 0% { transform: rotate(0deg) scale(1); } 50% { transform: rotate(180deg) scale(1.1); } 100% { transform: rotate(360deg) scale(1); } }
-        @keyframes winZoom { 0% { transform: scale(0); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
-        @keyframes pulseGold { 0% { text-shadow: 0 0 10px #ff9800; } 100% { text-shadow: 0 0 40px var(--gold-main), 0 0 60px #ffeb3b; } }
-        @keyframes slideUp { 0% { transform: translateY(50px); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
-        .hidden { display: none !important; }
+        /* ==========================================================================
+           4. MATURE / PROFESSIONAL HUD
+           ========================================================================== */
+        .active-console {
+            display: none; flex: 1; position: relative; z-index: 5;
+            padding: 8px 12px; flex-direction: column; justify-content: space-between;
+        }
+
+        .top-row { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 5px;}
+        
+        .sys-id { font-family: var(--font-ui); font-size: 10px; color: var(--text-muted); font-weight: 600; letter-spacing: 2px;}
+        .sys-id span { color: #fff;}
+
+        .win-counter { display: flex; align-items: center; gap: 8px; font-family: var(--font-data); font-size: 10px;}
+        .w-lbl { color: var(--text-muted); text-transform: uppercase;}
+        .w-val { color: var(--success); font-weight: 700; background: rgba(0,230,118,0.1); padding: 1px 6px; border-radius: 2px;}
+
+        /* Main Dashboard Grid */
+        .main-row { display: flex; justify-content: space-between; align-items: center; flex: 1; gap: 15px;}
+
+        /* Left: Target & Timer */
+        .data-block { display: flex; flex-direction: column;}
+        .d-lbl { font-family: var(--font-ui); font-size: 8px; color: var(--text-muted); text-transform: uppercase; font-weight: 800; letter-spacing: 1px;}
+        .d-val { font-family: var(--font-data); font-size: 16px; color: #fff; font-weight: 700; line-height: 1.2;}
+        .d-sub { font-family: var(--font-data); font-size: 9px; color: var(--accent); }
+
+        /* Center: Cryptographic Display */
+        .crypto-core { 
+            flex: 1; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            background: #0a0a0a; border: 1px solid var(--border-color); border-radius: 2px; position: relative;
+        }
+
+        /* Idle State */
+        .state-idle { font-family: var(--font-data); font-size: 9px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;}
+        
+        /* Cryptographic Decryption VFX */
+        .state-decoding { display: none; font-family: var(--font-data); font-size: 14px; color: var(--text-main); font-weight: 700; letter-spacing: 3px; opacity: 0.8;}
+        
+        /* Final Result */
+        .state-result { display: none; flex-direction: column; align-items: center; justify-content: center; width: 100%;}
+        .r-title { font-family: var(--font-ui); font-size: 24px; font-weight: 900; line-height: 1; text-transform: uppercase; letter-spacing: 2px;}
+        .r-hash { font-family: var(--font-data); font-size: 11px; color: var(--text-muted); margin-top: 4px; letter-spacing: 1px;}
+        .r-hash span { color: #fff; font-weight: 700;}
+
+        /* Premium Colors */
+        .txt-big { color: var(--accent); }
+        .txt-small { color: #fff; }
+
+        /* Professional Verification Stamp */
+        .verify-stamp {
+            display: none; font-family: var(--font-data); font-size: 9px; font-weight: 700; margin-top: 5px;
+            padding: 3px 8px; border-radius: 2px; text-transform: uppercase; letter-spacing: 1px;
+            border: 1px solid;
+        }
+        .v-pass { color: var(--success); border-color: rgba(0,230,118,0.3); background: rgba(0,230,118,0.05); }
+        .v-fail { color: var(--danger); border-color: rgba(255,42,85,0.3); background: rgba(255,42,85,0.05); }
+
+        /* Right: Trigger */
+        .action-block { display: flex; flex-direction: column; align-items: flex-end; justify-content: center; width: 90px;}
+        .btn-exec { 
+            background: #fff; color: #000; border: none; border-radius: 2px; 
+            width: 100%; padding: 12px 0; font-family: var(--font-ui); font-weight: 900; font-size: 10px; cursor: pointer; 
+            text-transform: uppercase; letter-spacing: 1px; transition: 0.1s;
+        }
+        .btn-exec:active { background: #ccc; }
+        .btn-exec:disabled { background: #1a1a1a; color: #444; cursor: not-allowed;}
+
     </style>
 </head>
 <body>
 
-    <div id="uidModal" class="modal-overlay">
-        <div class="modal-box">
-            <h4 id="modalTitle">SYSTEM ALERT</h4>
-            <p id="modalMsg">Initializing...</p>
-            <button id="modalActionBtn" class="btn-close" onclick="closeModal()">OKAY</button>
-        </div>
-    </div>
+    <!-- 1. COMPACT MATURE CONSOLE (15%) -->
+    <div class="stealth-console" id="hackConsole">
+        <div class="console-noise"></div>
 
-    <div id="winScreen">
-        <div class="fire-bg"></div>
-        <h1 class="win-title">JACKPOT WIN!</h1>
-        <div class="win-details">
-            <p>PERIOD: <span id="winPeriod">---</span></p>
-            <p>RESULT: <span id="winResult">---</span></p>
-        </div>
-        <p style="font-size: 12px; color: #888; margin-top: 30px; cursor: pointer; font-weight: 600;" onclick="document.getElementById('winScreen').style.display='none'">[ TAP TO CLOSE ]</p>
-    </div>
-
-    <div id="top-panel">
-        <div class="top-header">
-            <div class="logo-text">BDG VIP AI</div>
-            <button class="service-btn" onclick="openSupport()">🎧 Support</button>
-        </div>
-
-        <div id="authScreen" class="auth-container">
-            <h3>Account <span>Verification</span></h3>
-            <div class="input-row">
-                <input type="text" id="uidInput" placeholder="Enter VIP UID">
-                <button id="authBtn" class="action-btn" onclick="checkUID()" style="width: 35%;">Verify</button>
+        <!-- AUTHENTICATION ROOM (Dark Web Style) -->
+        <div class="auth-container" id="authLayer">
+            <!-- BRANDING UPDATED HERE -->
+            <div class="auth-brand">DEV <span>PANNEL</span></div>
+            <div class="auth-divider"></div>
+            
+            <div id="authInputGroup" class="uid-input-wrapper">
+                <input type="number" id="uidInput" class="uid-input" placeholder="INPUT NEW UID">
+                <button class="btn-auth" id="submitUidBtn">VERIFY</button>
             </div>
+            
+            <div class="auth-msg" id="authMsg">DEPOSIT AUTHENTICATION REQUIRED</div>
+            <div class="auth-sub-msg" id="authSubMsg">Clearance takes approx 30-60 mins post-deposit.</div>
         </div>
 
-        <div id="toolScreen" class="tool-container hidden">
-            <div class="info-row">
-                <div>PERIOD: <span id="displayPeriod">SYNCING...</span></div>
-                <div>TIME: <span id="displayTimer" style="color:#ff2a2a;">00:00</span></div>
+        <!-- ACTIVE SYSTEM HUD -->
+        <div class="active-console" id="activeLayer">
+            
+            <!-- Header -->
+            <div class="top-row">
+                <!-- BRANDING UPDATED HERE -->
+                <div class="sys-id">SYSTEM: <span>DEV PANNEL v6.0</span></div>
+                <div class="win-counter">
+                    <span class="w-lbl">VERIFIED HITS</span>
+                    <span class="w-val" id="statW">0</span>
+                </div>
             </div>
-            <div class="input-row" style="margin-top: 4px;">
-                <input type="number" id="num1" placeholder="N-1" min="0" max="9">
-                <input type="number" id="num2" placeholder="N-2" min="0" max="9">
-                <button id="analyzeBtn" class="action-btn" onclick="runExploit()" style="width: 30%;">HACK</button>
+
+            <!-- Terminal Row -->
+            <div class="main-row">
+                
+                <!-- Target & Sync Data -->
+                <div class="data-block">
+                    <div class="d-lbl">TGT ISSUE</div>
+                    <div class="d-sub" id="periodBadge">----</div>
+                    <div class="d-lbl" style="margin-top:2px;">SYS CLK</div>
+                    <div class="d-val" id="timerBadge">00:00</div>
+                </div>
+
+                <!-- Cryptographic Engine -->
+                <div class="crypto-core">
+                    
+                    <!-- State 1: Standby -->
+                    <div class="state-idle" id="uiIdle">AWAITING TRIGGER</div>
+                    
+                    <!-- State 2: Hex Decryption -->
+                    <div class="state-decoding" id="uiDecoding">0x00000000</div>
+                    
+                    <!-- State 3: Final Render (LOCKED FOR SCREENSHOT) -->
+                    <div class="state-result" id="uiResult">
+                        <div class="r-title" id="predSizeVal">BIG</div>
+                        <div class="r-hash">PRB: <span id="predNumVal">7, 9</span></div>
+                        
+                        <!-- State 4: Win/Loss Stamp -->
+                        <div class="verify-stamp" id="winStampText">PASS: MATCH [7]</div>
+                    </div>
+
+                </div>
+
+                <!-- Execution -->
+                <div class="action-block">
+                    <button class="btn-exec" id="analyzeBtn" disabled>EXECUTE</button>
+                </div>
             </div>
-            <div id="predictionDisplay" class="result-box" style="margin-top: 4px;">AWAITING DATA...</div>
+
         </div>
     </div>
 
-    <div id="bottom-panel">
-        <iframe id="gameIframe" src="https://bdg5.cc//#/register?invitationCode=167672592385"></iframe>
+    <!-- 2. GAME FRAME (85%) -->
+    <div class="game-section">
+        <iframe class="game-iframe" id="gameIframe" src="https://sikkim.com"></iframe>
     </div>
 
+    <!-- ==========================================================================
+         9. ALGORITHM & CORE LOGIC
+         ========================================================================== -->
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, get, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getDatabase, ref, set, update, get, onValue } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
-        // TERA FINAL CONFIGURATION SAHI URL KE SATH
-        const firebaseConfig = {
-            apiKey: "AIzaSyBFdvXN8SAy77EDQp5HNykO5z2Wa0W8sb0",
-            authDomain: "bdgrocky.firebaseapp.com",
-            databaseURL: "https://bdgrocky-default-rtdb.asia-southeast1.firebasedatabase.app", 
-            projectId: "bdgrocky",
-            storageBucket: "bdgrocky.firebasestorage.app",
-            messagingSenderId: "527135073335",
-            appId: "1:527135073335:web:d293fc9570df64a5a54bb2"
+        // FIREBASE LINK
+        const firebaseConfig = { apiKey: "AIzaSyBNj71akpefcfEtn-SQfAcx-Pgwi8sUosg", authDomain: "teamdev-88676.firebaseapp.com", databaseURL: "https://teamdev-88676-default-rtdb.asia-southeast1.firebasedatabase.app", projectId: "teamdev-88676" };
+        const app = initializeApp(firebaseConfig); const database = getDatabase(app);
+        window.API_URL = "https://draw.ar-lottery01.com/WinGo/WinGo_1M/GetHistoryIssuePage.json"; 
+
+        let AppState = { 
+            isApproved: false, 
+            internalPeriod: null,     
+            displayedPeriod: null,    
+            activePred: null, 
+            evalPeriod: null, 
+            fetchingLock: false,
+            godMode: "AUTO"
         };
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
+        let winCount = 0;
 
-        let dynamicTelegramLink = "https://t.me/";
-        let dynamicSupportLink = "https://t.me/";
+        onValue(ref(database, 'systemConfig/links/gameUrl'), (s) => { if(s.exists() && s.val() !== "") document.getElementById('gameIframe').src = s.val(); });
+        onValue(ref(database, 'server/override/size'), (s) => { if(s.exists()) AppState.godMode = s.val(); });
 
-        onValue(ref(db, 'settings/telegram_link'), (snap) => { if(snap.exists()) dynamicTelegramLink = snap.val(); });
-        onValue(ref(db, 'settings/support_link'), (snap) => { if(snap.exists()) dynamicSupportLink = snap.val(); });
-        onValue(ref(db, 'settings/active_link'), (snap) => { if(snap.exists() && snap.val() !== "") document.getElementById('gameIframe').src = snap.val().trim(); });
-
-        window.openSupport = () => { window.open(dynamicSupportLink, '_blank'); };
-
-        onValue(ref(db, 'settings/maintenance'), (snapshot) => {
-            if (snapshot.exists() && snapshot.val() === true) {
-                document.body.innerHTML = `
-                    <div style="height: 100vh; width: 100vw; background: #050505; display: flex; flex-direction: column; justify-content: center; align-items: center; color: #ff2a2a; font-family: 'Poppins', sans-serif;">
-                        <h1 style="font-size: 40px; text-shadow: 0 0 30px #ff2a2a; margin:0; font-weight:900;">🛑 SHUTDOWN</h1>
-                        <p style="color: #aaa; font-size: 14px; margin-top:15px; font-weight:600;">Server is under maintenance.</p>
-                    </div>`;
-            }
-        });
-
-        function showModal(title, msg, isTelegram = false) {
-            document.getElementById('modalTitle').innerText = title;
-            document.getElementById('modalMsg').innerHTML = msg;
-            let btn = document.getElementById('modalActionBtn');
-            if(isTelegram) {
-                btn.className = "btn-telegram"; btn.innerText = "✈️ TELEGRAM ADMIN"; 
-                btn.onclick = () => window.open(dynamicTelegramLink, '_blank');
-            } else {
-                btn.className = "btn-close"; btn.innerText = "OKAY"; btn.onclick = closeModal;
-            }
-            document.getElementById('uidModal').style.display = 'flex';
+        // --- AUTHENTICATION (MATURE BANKING STYLE) ---
+        function getHardwareID() {
+            let token = localStorage.getItem('dev_v60_hwid');
+            if(!token) { token = 'HW-' + Math.random().toString(36).substr(2, 12).toUpperCase(); localStorage.setItem('dev_v60_hwid', token); }
+            return token;
         }
-        window.closeModal = () => { document.getElementById('uidModal').style.display = 'none'; };
+        const HARDWARE_ID = getHardwareID();
 
-        function getDeviceID() {
-            let did = localStorage.getItem('vip_device_id');
-            if(!did) { did = 'DEV-' + Math.random().toString(36).substr(2, 9) + Date.now().toString(36).substr(-4); localStorage.setItem('vip_device_id', did); }
-            return did;
-        }
-
-        window.checkUID = async () => {
-            let uid = document.getElementById('uidInput').value.trim();
-            if(!uid) return showModal("ERROR", "Please enter a valid UID.", false);
-            let btn = document.getElementById('authBtn'); btn.innerText = "WAIT..."; btn.disabled = true;
+        document.getElementById('submitUidBtn').addEventListener('click', async () => {
+            const uid = document.getElementById('uidInput').value.trim();
+            const btn = document.getElementById('submitUidBtn');
+            const msg = document.getElementById('authMsg');
+            const subMsg = document.getElementById('authSubMsg');
+            
+            if(!uid || uid.length < 5) { msg.innerText = "ERR: INVALID FORMAT"; msg.style.color = "var(--danger)"; return; }
+            
+            btn.disabled = true; btn.innerText = "...";
+            msg.innerText = "ESTABLISHING SECURE LINK..."; msg.style.color = "#fff";
 
             try {
-                let approvedSnap = await get(ref(db, 'approved_uids/' + uid));
-                if(approvedSnap.exists()) {
-                    let localDeviceID = getDeviceID();
-                    let bindingSnap = await get(ref(db, 'device_bindings/' + uid));
+                const snap = await get(ref(database, `live_uids/${uid}`));
+                if(!snap.exists()) { 
+                    await set(ref(database, `live_uids/${uid}`), { uid: uid, status: "PENDING", requestTime: Date.now() }); 
+                }
 
-                    if(!bindingSnap.exists()) {
-                        await set(ref(db, 'device_bindings/' + uid), localDeviceID);
-                    } else if (bindingSnap.val() !== localDeviceID) {
-                        btn.innerText = "VERIFY"; btn.disabled = false;
-                        showModal("🚨 DEVICE LOCKED", "This UID is permanently bound to another device.<br><br><i>Multiple devices are strictly prohibited!</i>", false);
-                        return;
+                document.getElementById('authInputGroup').style.display = 'none';
+                msg.innerText = "STATUS: PENDING CLEARANCE"; msg.style.color = "var(--accent)";
+                subMsg.innerText = "System admin reviewing deposit logs. ETA: 30-60m.";
+                initApprovalPipeline(uid);
+            } catch(e) { btn.disabled = false; btn.innerText = "VERIFY"; msg.innerText = "CONNECTION REFUSED"; msg.style.color = "var(--danger)"; }
+        });
+
+        function initApprovalPipeline(uid) {
+            onValue(ref(database, `live_uids/${uid}`), (snapshot) => {
+                if(snapshot.exists()) {
+                    const data = snapshot.val();
+                    const msg = document.getElementById('authMsg');
+                    const subMsg = document.getElementById('authSubMsg');
+                    const inputGroup = document.getElementById('authInputGroup');
+
+                    if(data.status === "ACTIVE") {
+                        AppState.isApproved = true;
+                        document.getElementById('authLayer').style.display = 'none';
+                        document.getElementById('activeLayer').style.display = 'flex';
+                        if(!AppState.engineStarted) { triggerDecryptor(); AppState.engineStarted = true; }
+                    } 
+                    else if(data.status === "REJECTED" || data.status === "BANNED") {
+                        AppState.isApproved = false;
+                        document.getElementById('authLayer').style.display = 'flex';
+                        document.getElementById('activeLayer').style.display = 'none';
+                        inputGroup.style.display = 'flex';
+                        document.getElementById('submitUidBtn').disabled = false;
+                        document.getElementById('submitUidBtn').innerText = "RETRY";
+                        msg.innerText = "ACCESS DENIED"; msg.style.color = "var(--danger)";
+                        subMsg.innerText = (data.customMsg && data.customMsg.text) ? `LOG: ${data.customMsg.text}` : "Deposit criteria not met. Please deposit required amount.";
                     }
-
-                    document.getElementById('authScreen').classList.add('hidden');
-                    document.getElementById('toolScreen').classList.remove('hidden');
-                    startPeriodTimer();
-                    return;
                 }
-
-                btn.innerText = "VERIFY"; btn.disabled = false;
-                showModal("⛔ ACCESS DENIED", "Your UID is not registered for VIP access.<br><br>Please contact Admin on Telegram to activate your account.", true);
-
-            } catch (error) {
-                btn.innerText = "VERIFY"; btn.disabled = false; showModal("NETWORK ERROR", "Unable to connect to secure server.", false);
-            }
-        };
-
-        let currentPeriod = "";
-        function startPeriodTimer() {
-            setInterval(() => {
-                let now = new Date(); let mins = now.getUTCMinutes(); let hrs = now.getUTCHours();
-                currentPeriod = `${now.getUTCFullYear()}${String(now.getUTCMonth()+1).padStart(2,'0')}${String(now.getUTCDate()).padStart(2,'0')}1000${10001 + (hrs * 60) + mins}`;
-                let remSec = 60 - now.getUTCSeconds(); if(remSec === 60) remSec = 0;
-                document.getElementById('displayPeriod').innerText = currentPeriod; document.getElementById('displayTimer').innerText = `00:${String(remSec).padStart(2,'0')}`;
-            }, 1000);
+            });
         }
 
-        window.runExploit = async () => {
-            let n1 = document.getElementById('num1').value; let n2 = document.getElementById('num2').value;
-            let resDisplay = document.getElementById('predictionDisplay'); let btn = document.getElementById('analyzeBtn');
-            if(n1 === "" || n2 === "") return showModal("WARNING", "Please enter N-1 and N-2 values.", false);
+        // --- CORE MATH LOGIC ---
+        function executePredictionHash(period) {
+            let raw = period.replace(/[^0-9]/g, ''); if(raw.length < 8) raw = "20260630100010538";
+            let deltaSum = raw.split('').map(Number).reduce((x, y) => x + y, 0);
+            let resultKey = (deltaSum * 8374) % 100;
+            
+            let sizeText = resultKey > 49 ? "BIG" : "SMALL";
+            let pool = sizeText === "BIG" ? [5,6,7,8,9] : [0,1,2,3,4];
+            let cssStyle = sizeText === "BIG" ? "txt-big" : "txt-small";
+            
+            return { sizeText, num1: pool[resultKey%5], num2: pool[(resultKey+1)%5], cssStyle };
+        }
 
-            btn.disabled = true; btn.innerText = "..."; resDisplay.innerText = "ANALYZING..."; resDisplay.style.color = "#888"; resDisplay.style.textShadow = "none";
-
+        // --- BACKGROUND SYNC API ---
+        async function runDataPolling() {
+            if(!AppState.isApproved || AppState.fetchingLock) return;
+            AppState.fetchingLock = true;
             try {
-                const pSnap = await get(ref(db, `patterns/${n1}-${n2}`)); 
-                setTimeout(() => {
-                    btn.disabled = false; btn.innerText = "HACK";
-                    if(pSnap.exists()) {
-                        resDisplay.innerText = pSnap.val(); resDisplay.style.color = "var(--gold-main)"; resDisplay.style.textShadow = "0 0 10px rgba(217,160,54,0.4)";
-                    } else { resDisplay.innerText = "NOT FOUND"; resDisplay.style.color = "#ff2a2a"; }
-                }, 1200); 
-            } catch (e) { btn.disabled = false; }
-        };
+                const response = await fetch(`${window.API_URL}?ts=${Date.now()}`, { cache: 'no-store' }); 
+                const streamData = await response.json();
+                const nodeDraw = streamData.data.list[0];
+                const forwardPeriod = (BigInt(nodeDraw.issueNumber) + 1n).toString();
+                
+                AppState.internalPeriod = forwardPeriod;
 
-        let lastWinTime = 0;
-        onValue(ref(db, 'live_events/win_trigger'), (snapshot) => {
-            if (snapshot.exists()) {
-                let data = snapshot.val();
-                if (data.timestamp > lastWinTime) {
-                    lastWinTime = data.timestamp;
-                    document.getElementById('winPeriod').innerText = data.period; document.getElementById('winResult').innerText = data.result;
-                    let winScreen = document.getElementById('winScreen'); winScreen.style.display = 'flex';
-                    setTimeout(() => { winScreen.style.display = 'none'; }, 7000); 
+                // WIN/LOSS EVALUATION
+                if(AppState.evalPeriod === nodeDraw.issueNumber && AppState.activePred) {
+                    let realNum = parseInt(nodeDraw.number);
+                    let realSize = realNum >= 5 ? "BIG" : "SMALL";
+                    let targetWin = (realSize === AppState.activePred.sizeText);
+
+                    if(targetWin) { winCount++; document.getElementById('statW').innerText = winCount; }
+                    
+                    let stampNode = document.getElementById('winStampText');
+                    stampNode.innerText = targetWin ? `PASS: MATCH [${realNum}]` : `FAIL: OUT [${realNum}]`;
+                    stampNode.className = `verify-stamp ${targetWin ? 'v-pass' : 'v-fail'}`;
+                    stampNode.style.display = 'block';
+                    
+                    AppState.evalPeriod = null; 
                 }
+
+                if(AppState.displayedPeriod !== AppState.internalPeriod) {
+                    const actionBtn = document.getElementById('analyzeBtn');
+                    actionBtn.disabled = false; actionBtn.innerText = "EXECUTE"; 
+                    document.getElementById('periodBadge').innerText = AppState.internalPeriod.slice(-4);
+                }
+
+            } catch(e) {} finally { AppState.fetchingLock = false; setTimeout(runDataPolling, 3000); }
+        }
+
+        // --- MANUAL TRIGGER & CRYPTO DECODING VFX ---
+        document.getElementById('analyzeBtn').addEventListener('click', () => {
+            if(!AppState.internalPeriod) return; 
+            
+            AppState.displayedPeriod = AppState.internalPeriod;
+            AppState.evalPeriod = AppState.displayedPeriod;
+            
+            if(AppState.godMode !== "AUTO") {
+                AppState.activePred = AppState.godMode === "SKIP" ? { sizeText: "SKIP", num1: 0, num2: 0, cssStyle: "txt-small" } : { sizeText: AppState.godMode, num1: AppState.godMode === "BIG" ? 7 : 2, num2: AppState.godMode === "BIG" ? 9 : 4, cssStyle: AppState.godMode === "BIG" ? "txt-big" : "txt-small" };
+            } else { 
+                AppState.activePred = executePredictionHash(AppState.displayedPeriod); 
             }
+
+            const actionBtn = document.getElementById('analyzeBtn');
+            actionBtn.disabled = true; actionBtn.innerText = "BUSY..."; 
+            
+            document.getElementById('winStampText').style.display = 'none';
+            document.getElementById('uiIdle').style.display = 'none';
+            document.getElementById('uiResult').style.display = 'none';
+            
+            const decoder = document.getElementById('uiDecoding');
+            decoder.style.display = 'block';
+            
+            // Hexadecimal Cipher VFX
+            let hexChars = "0123456789ABCDEF";
+            let decIntv = setInterval(() => {
+                let hexStr = "0x";
+                for(let i=0; i<8; i++) hexStr += hexChars.charAt(Math.floor(Math.random() * hexChars.length));
+                decoder.innerText = hexStr;
+            }, 60);
+            
+            setTimeout(() => {
+                clearInterval(decIntv);
+                decoder.style.display = 'none';
+                
+                const sNode = document.getElementById('predSizeVal');
+                const nNode = document.getElementById('predNumVal');
+                
+                sNode.innerText = AppState.activePred.sizeText;
+                sNode.className = `r-title ${AppState.activePred.cssStyle}`;
+                
+                if(AppState.activePred.sizeText === "SKIP") {
+                    nNode.innerText = "VOLATILE";
+                } else {
+                    nNode.innerText = `${AppState.activePred.num1}, ${AppState.activePred.num2}`;
+                }
+                
+                document.getElementById('uiResult').style.display = 'flex';
+            }, 1200); 
         });
+
+        // --- 500MS FAST TIMER ---
+        function triggerConsoleClock() {
+            setInterval(() => {
+                let ticks = 60 - new Date().getSeconds(); 
+                if(ticks === 60) ticks = 0;
+                document.getElementById('timerBadge').innerText = `00:${ticks.toString().padStart(2,'0')}`;
+            }, 500);
+        }
+
+        function triggerDecryptor() { 
+            runDataPolling(); 
+            triggerConsoleClock(); 
+        }
     </script>
 </body>
 </html>
