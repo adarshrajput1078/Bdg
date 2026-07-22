@@ -2,94 +2,157 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NSE AMIR • MASTER CONTROL ROOM</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>NSE AMIR • MOBILE ADMIN PANEL</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Rajdhani:wght@600;700&family=JetBrains+Mono:wght@700&display=swap');
   
-  * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Rajdhani', sans-serif; }
-  body { background: #05010a; color: #fff; display: flex; height: 100vh; overflow: hidden; }
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Rajdhani', sans-serif; -webkit-tap-highlight-color: transparent; }
+  body { background: #05010a; color: #fff; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
 
   /* --- SCROLLBAR --- */
-  ::-webkit-scrollbar { width: 8px; }
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
   ::-webkit-scrollbar-track { background: #090212; }
   ::-webkit-scrollbar-thumb { background: #3c1263; border-radius: 4px; }
   ::-webkit-scrollbar-thumb:hover { background: #7b2cbf; }
 
+  /* --- MOBILE HEADER (Visible only on small screens) --- */
+  .mobile-header {
+    display: none; justify-content: space-between; align-items: center;
+    padding: 15px 20px; background: #090212; border-bottom: 2px solid #2a0a4a; z-index: 100;
+  }
+  .hamburger { font-size: 1.5rem; color: #00ff66; cursor: pointer; }
+  .mobile-brand { font-family: 'Orbitron', sans-serif; font-size: 1.2rem; font-weight: 900; color: #ff3366; letter-spacing: 1px; }
+  .mobile-brand span { color: #fff; }
+
   /* --- SIDEBAR --- */
-  .sidebar { width: 260px; background: #090212; border-right: 2px solid #2a0a4a; display: flex; flex-direction: column; padding: 20px; box-shadow: 5px 0 20px rgba(0,0,0,0.5); z-index: 10; }
-  .brand { font-family: 'Orbitron', sans-serif; font-size: 1.5rem; font-weight: 900; color: #ff3366; text-shadow: 0 0 10px rgba(255,51,102,0.5); text-align: center; margin-bottom: 30px; letter-spacing: 2px; }
+  .sidebar {
+    width: 260px; background: #090212; border-right: 2px solid #2a0a4a;
+    display: flex; flex-direction: column; padding: 20px; box-shadow: 5px 0 20px rgba(0,0,0,0.5);
+    position: fixed; top: 0; left: 0; bottom: 0; z-index: 1000;
+    transition: transform 0.3s ease;
+  }
+  .sidebar-overlay {
+    display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.7); z-index: 999;
+  }
+  
+  .brand { font-family: 'Orbitron', sans-serif; font-size: 1.5rem; font-weight: 900; color: #ff3366; text-align: center; margin-bottom: 30px; letter-spacing: 2px; }
   .brand span { color: #fff; }
   
-  .nav-item { padding: 15px; margin-bottom: 10px; border-radius: 8px; cursor: pointer; color: #c77dff; font-weight: 700; font-size: 1.1rem; transition: 0.3s; display: flex; align-items: center; gap: 10px; }
+  .nav-item {
+    padding: 15px; margin-bottom: 10px; border-radius: 8px; cursor: pointer;
+    color: #c77dff; font-weight: 700; font-size: 1.1rem; transition: 0.3s; display: flex; align-items: center; gap: 10px;
+  }
   .nav-item:hover { background: rgba(123, 44, 191, 0.1); color: #fff; }
   .nav-item.active { background: linear-gradient(90deg, #3c1263, transparent); color: #00ff66; border-left: 4px solid #00ff66; box-shadow: inset 10px 0 20px rgba(0,255,102,0.1); }
+  .close-sidebar { display: none; color: #ff3366; font-size: 1.5rem; position: absolute; top: 15px; right: 20px; cursor: pointer; }
 
   /* --- MAIN CONTENT --- */
-  .main-content { flex: 1; display: flex; flex-direction: column; overflow-y: auto; background: radial-gradient(circle at top right, rgba(123,44,191,0.1), transparent 50%); }
+  .main-content {
+    flex: 1; display: flex; flex-direction: column; overflow-y: auto;
+    background: radial-gradient(circle at top right, rgba(123,44,191,0.1), transparent 50%);
+    margin-left: 260px; /* Offset for desktop sidebar */
+    transition: margin-left 0.3s ease;
+  }
   
-  .top-header { padding: 20px 30px; border-bottom: 1px solid #2a0a4a; display: flex; justify-content: space-between; align-items: center; background: rgba(9, 2, 18, 0.8); backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 5; }
+  .top-header {
+    padding: 20px; border-bottom: 1px solid #2a0a4a; display: flex; justify-content: space-between; align-items: center;
+    background: rgba(9, 2, 18, 0.8); backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 5;
+  }
   .top-header h1 { font-family: 'Orbitron', sans-serif; font-size: 1.2rem; color: #fff; letter-spacing: 1px; }
+  .status-text { font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: #00ff66; }
   
-  .dashboard-wrapper { padding: 30px; display: flex; flex-direction: column; gap: 25px; }
+  .dashboard-wrapper { padding: 20px; display: flex; flex-direction: column; gap: 20px; }
 
   /* --- STATS CARDS --- */
-  .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
-  .stat-card { background: #090212; border: 1px solid #3c1263; padding: 20px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); position: relative; overflow: hidden; }
+  .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; }
+  .stat-card { background: #090212; border: 1px solid #3c1263; padding: 15px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); position: relative; overflow: hidden; }
   .stat-card::before { content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: #00ff66; }
   .stat-card.red-card::before { background: #ff3366; }
   .stat-card.purple-card::before { background: #9d4edd; }
-  .stat-card h3 { font-size: 0.9rem; color: #8892b0; margin-bottom: 10px; text-transform: uppercase; font-weight: 700; }
-  .stat-card h2 { font-family: 'JetBrains Mono', monospace; font-size: 2rem; color: #fff; }
+  .stat-card h3 { font-size: 0.8rem; color: #8892b0; margin-bottom: 5px; text-transform: uppercase; font-weight: 700; }
+  .stat-card h2 { font-family: 'JetBrains Mono', monospace; font-size: 1.8rem; color: #fff; }
 
   /* --- CONTROL PANELS --- */
   .controls-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
   
-  .panel { background: #090212; border: 1px solid #3c1263; border-radius: 12px; padding: 25px; box-shadow: 0 5px 20px rgba(0,0,0,0.5); }
-  .panel h2 { font-family: 'Orbitron', sans-serif; font-size: 1.1rem; color: #00ff66; margin-bottom: 20px; border-bottom: 1px solid #2a0a4a; padding-bottom: 10px; }
+  .panel { background: #090212; border: 1px solid #3c1263; border-radius: 12px; padding: 20px; box-shadow: 0 5px 20px rgba(0,0,0,0.5); }
+  .panel h2 { font-family: 'Orbitron', sans-serif; font-size: 1rem; color: #00ff66; margin-bottom: 15px; border-bottom: 1px solid #2a0a4a; padding-bottom: 10px; }
   
-  .form-group { margin-bottom: 15px; }
+  .form-row { display: flex; gap: 15px; }
+  .form-group { margin-bottom: 15px; flex: 1; }
   .form-group label { display: block; font-size: 0.85rem; color: #c77dff; margin-bottom: 5px; font-weight: 700; }
-  .form-control { width: 100%; background: #05010a; border: 1px solid #3c1263; color: #00ff66; padding: 12px; border-radius: 6px; font-family: 'JetBrains Mono', monospace; outline: none; transition: 0.3s; }
+  .form-control { width: 100%; background: #05010a; border: 1px solid #3c1263; color: #00ff66; padding: 12px; border-radius: 6px; font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; outline: none; transition: 0.3s; }
   .form-control:focus { border-color: #00ff66; box-shadow: 0 0 10px rgba(0,255,102,0.2); }
-  select.form-control { cursor: pointer; }
-
-  .btn { display: inline-block; background: linear-gradient(90deg, #7b2cbf, #9d4edd); color: #fff; padding: 12px 20px; border: none; border-radius: 6px; font-family: 'Orbitron', sans-serif; font-size: 0.9rem; font-weight: 900; cursor: pointer; transition: 0.2s; box-shadow: 0 5px 15px rgba(123, 44, 191, 0.4); text-transform: uppercase; width: 100%; text-align: center; }
-  .btn:active { transform: scale(0.98); }
+  
+  .btn { display: inline-block; background: linear-gradient(90deg, #7b2cbf, #9d4edd); color: #fff; padding: 12px 15px; border: none; border-radius: 6px; font-family: 'Orbitron', sans-serif; font-size: 0.85rem; font-weight: 900; cursor: pointer; transition: 0.2s; box-shadow: 0 5px 15px rgba(123, 44, 191, 0.4); text-transform: uppercase; width: 100%; text-align: center; }
+  .btn:active { transform: scale(0.96); }
   .btn-green { background: linear-gradient(90deg, #00b050, #00e676); box-shadow: 0 5px 15px rgba(0, 230, 118, 0.3); }
   .btn-red { background: linear-gradient(90deg, #d90429, #ff3366); box-shadow: 0 5px 15px rgba(255, 51, 102, 0.3); }
-  .btn-sm { padding: 6px 12px; font-size: 0.75rem; width: auto; font-family: 'Rajdhani', sans-serif; letter-spacing: 1px; }
+  .btn-sm { padding: 6px 10px; font-size: 0.7rem; width: auto; font-family: 'Rajdhani', sans-serif; letter-spacing: 0.5px; }
 
   /* --- DATA TABLE --- */
-  .table-container { background: #090212; border: 1px solid #3c1263; border-radius: 12px; overflow: hidden; box-shadow: 0 5px 20px rgba(0,0,0,0.5); }
-  .table-header { padding: 20px; border-bottom: 1px solid #2a0a4a; display: flex; justify-content: space-between; align-items: center; }
-  .table-header h2 { font-family: 'Orbitron', sans-serif; font-size: 1.1rem; color: #fff; }
+  .table-container { background: #090212; border: 1px solid #3c1263; border-radius: 12px; overflow-x: auto; box-shadow: 0 5px 20px rgba(0,0,0,0.5); }
+  .table-header { padding: 15px 20px; border-bottom: 1px solid #2a0a4a; display: flex; justify-content: space-between; align-items: center; min-width: 600px; }
+  .table-header h2 { font-family: 'Orbitron', sans-serif; font-size: 1rem; color: #fff; }
   
-  table { width: 100%; border-collapse: collapse; text-align: left; }
-  th { background: #10041f; padding: 15px 20px; font-size: 0.85rem; color: #8892b0; text-transform: uppercase; font-family: 'Orbitron', sans-serif; letter-spacing: 1px; }
-  td { padding: 15px 20px; border-top: 1px solid #2a0a4a; font-size: 0.95rem; font-weight: 600; color: #ddd; }
+  table { width: 100%; border-collapse: collapse; text-align: left; min-width: 700px; }
+  th { background: #10041f; padding: 12px 15px; font-size: 0.8rem; color: #8892b0; text-transform: uppercase; font-family: 'Orbitron', sans-serif; letter-spacing: 1px; }
+  td { padding: 12px 15px; border-top: 1px solid #2a0a4a; font-size: 0.9rem; font-weight: 600; color: #ddd; white-space: nowrap; }
   td.uid-font { font-family: 'JetBrains Mono', monospace; color: #c77dff; font-weight: 700; }
   
-  .badge { padding: 4px 10px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; font-family: 'JetBrains Mono', monospace; text-transform: uppercase; }
+  .badge { padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; font-family: 'JetBrains Mono', monospace; }
   .bg-green { background: rgba(0,255,102,0.1); color: #00ff66; border: 1px solid rgba(0,255,102,0.3); }
   .bg-red { background: rgba(255,51,102,0.1); color: #ff3366; border: 1px solid rgba(255,51,102,0.3); }
   .bg-purple { background: rgba(199,125,255,0.1); color: #c77dff; border: 1px solid rgba(199,125,255,0.3); }
   
-  .action-btns { display: flex; gap: 8px; }
+  .action-btns { display: flex; gap: 5px; }
 
   /* --- TOAST NOTIFICATION --- */
   .toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 10000; display: flex; flex-direction: column; gap: 10px; }
-  .toast { background: rgba(9, 2, 18, 0.95); border-left: 4px solid #00ff66; color: #fff; padding: 15px 25px; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); font-family: 'Rajdhani', sans-serif; font-size: 1rem; font-weight: 700; animation: slideIn 0.3s ease forwards; display: flex; align-items: center; gap: 10px; border-right: 1px solid #3c1263; border-top: 1px solid #3c1263; border-bottom: 1px solid #3c1263; }
+  .toast { background: rgba(9, 2, 18, 0.95); border-left: 4px solid #00ff66; color: #fff; padding: 12px 20px; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); font-size: 0.9rem; font-weight: 700; animation: slideIn 0.3s ease forwards; display: flex; align-items: center; gap: 8px; border-right: 1px solid #3c1263; border-top: 1px solid #3c1263; border-bottom: 1px solid #3c1263; }
   .toast.error { border-left-color: #ff3366; }
   @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
   @keyframes fadeOut { to { opacity: 0; transform: translateY(-10px); } }
 
+  /* =========================================
+     RESPONSIVE DESIGN (MOBILE FRIENDLY)
+     ========================================= */
+  @media (max-width: 992px) {
+    .controls-grid { grid-template-columns: 1fr; } /* Stack panels vertically on tablet/mobile */
+  }
+
+  @media (max-width: 768px) {
+    .mobile-header { display: flex; }
+    .main-content { margin-left: 0; height: calc(100vh - 60px); }
+    .top-header { display: none; } /* Hide desktop top header */
+    
+    .sidebar { transform: translateX(-100%); } /* Hide sidebar off-screen */
+    .sidebar.open { transform: translateX(0); }
+    .close-sidebar { display: block; }
+    
+    .form-row { flex-direction: column; gap: 0; }
+    .dashboard-wrapper { padding: 15px; }
+    
+    .toast-container { right: 10px; bottom: 10px; left: 10px; align-items: center; }
+    .toast { width: 100%; justify-content: center; }
+  }
 </style>
 </head>
 <body>
 
-<div class="sidebar">
-  <div class="brand">NSE <span>ADMIN</span></div>
+<!-- MOBILE APP BAR -->
+<div class="mobile-header">
+  <div class="mobile-brand">NSE <span>ADMIN</span></div>
+  <div class="hamburger" onclick="toggleSidebar()">☰</div>
+</div>
+
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+<div class="sidebar" id="sidebar">
+  <div class="close-sidebar" onclick="toggleSidebar()">×</div>
+  <div class="brand" style="display: none;" id="desktopBrand">NSE <span>ADMIN</span></div>
   <div class="nav-item active">⎚ Control Center</div>
   <div class="nav-item">⚙️ Settings Log</div>
   <div style="margin-top: auto; font-size: 0.7rem; color: #555; text-align: center;">SYSTEM V4.0</div>
@@ -98,7 +161,7 @@
 <div class="main-content">
   <div class="top-header">
     <h1>MASTER DASHBOARD</h1>
-    <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: #00ff66;">● SECURE CONNECTION ESTABLISHED</div>
+    <div class="status-text">● SECURE CONNECTION ESTABLISHED</div>
   </div>
 
   <div class="dashboard-wrapper">
@@ -106,7 +169,7 @@
     <!-- STATS ROW -->
     <div class="stats-grid">
       <div class="stat-card">
-        <h3>Total Generated Keys</h3>
+        <h3>Generated Keys</h3>
         <h2 id="statTotal">0</h2>
       </div>
       <div class="stat-card purple-card">
@@ -121,10 +184,11 @@
 
     <!-- CONTROLS ROW -->
     <div class="controls-grid">
+      
       <!-- Generate Key Panel -->
       <div class="panel">
         <h2>✚ GENERATE VIP KEY</h2>
-        <div style="display: flex; gap: 15px;">
+        <div class="form-row">
           <div class="form-group" style="flex: 2;">
             <label>Custom VIP Key (Optional)</label>
             <input type="text" id="newUidInput" class="form-control" placeholder="Leave empty for auto-generate">
@@ -150,10 +214,11 @@
           <input type="text" id="gameLinkInput" class="form-control" placeholder="https://tiranga.com">
         </div>
         <div style="display: flex; gap: 10px;">
-          <button class="btn" style="flex: 1; padding: 10px;" onclick="updateGameLink()">UPDATE LINK</button>
-          <button class="btn btn-red" id="btnMaint" style="flex: 1; padding: 10px;" onclick="toggleMaintenance()">KILL SWITCH</button>
+          <button class="btn" style="flex: 1; padding: 10px;" onclick="updateGameLink()">UPDATE</button>
+          <button class="btn btn-red" id="btnMaint" style="flex: 1; padding: 10px;" onclick="toggleMaintenance()">LOCK</button>
         </div>
       </div>
+
     </div>
 
     <!-- USERS TABLE -->
@@ -180,7 +245,6 @@
   </div>
 </div>
 
-<!-- TOAST NOTIFICATION CONTAINER -->
 <div class="toast-container" id="toastContainer"></div>
 
 <!-- FIREBASE SDK -->
@@ -202,6 +266,25 @@
   const db = getDatabase(app);
 
   let currentMaintenance = false;
+
+  // --- MOBILE SIDEBAR LOGIC ---
+  window.toggleSidebar = function() {
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+    sidebar.classList.toggle('open');
+    if (sidebar.classList.contains('open')) {
+      overlay.style.display = 'block';
+    } else {
+      overlay.style.display = 'none';
+    }
+  };
+
+  // Adjust brand visibility for desktop vs mobile
+  if(window.innerWidth > 768) { document.getElementById('desktopBrand').style.display = 'block'; }
+  window.addEventListener('resize', () => {
+    if(window.innerWidth > 768) document.getElementById('desktopBrand').style.display = 'block';
+    else document.getElementById('desktopBrand').style.display = 'none';
+  });
 
   // --- CUSTOM TOAST NOTIFICATION ---
   window.showToast = function(msg, isError = false) {
@@ -225,7 +308,7 @@
     currentMaintenance = data.maintenance || false;
     const btnMaint = document.getElementById('btnMaint');
     if(currentMaintenance) {
-      btnMaint.innerText = "REMOVE LOCK";
+      btnMaint.innerText = "UNLOCK ALL";
       btnMaint.className = "btn";
     } else {
       btnMaint.innerText = "KILL SWITCH";
@@ -236,12 +319,12 @@
   window.updateGameLink = function() {
     const link = document.getElementById('gameLinkInput').value;
     update(ref(db, 'settings'), { gameLink: link });
-    showToast("Global Game Link Updated!");
+    showToast("Game Link Updated!");
   };
 
   window.toggleMaintenance = function() {
     update(ref(db, 'settings'), { maintenance: !currentMaintenance });
-    if(!currentMaintenance) showToast("Kill Switch Activated! All users locked out.", true);
+    if(!currentMaintenance) showToast("Kill Switch ON! Users locked out.", true);
     else showToast("System restored online.");
   };
 
@@ -256,10 +339,10 @@
     set(ref(db, 'users/' + key), {
       status: "approved",
       expiry: expiryTime,
-      deviceId: "" // Unbound initially
+      deviceId: ""
     }).then(() => {
-      showToast("New VIP Key Generated: " + key);
-      document.getElementById('newUidInput').value = ""; // Clear input
+      showToast("Key Generated: " + key);
+      document.getElementById('newUidInput').value = ""; 
     });
   };
 
@@ -308,13 +391,12 @@
         <td class="action-btns">
           <button class="btn btn-sm" onclick="toggleStatus('${uid}', '${blockBtnAction}')">${blockBtnText}</button>
           <button class="btn btn-sm" onclick="resetDevice('${uid}')">Reset Device</button>
-          <button class="btn btn-red btn-sm" onclick="deleteUser('${uid}')">Delete</button>
+          <button class="btn btn-red btn-sm" onclick="deleteUser('${uid}')">Del</button>
         </td>
       `;
       tbody.appendChild(tr);
     });
 
-    // Update Stats
     document.getElementById('statTotal').innerText = total;
     document.getElementById('statActive').innerText = active;
     document.getElementById('statExpired').innerText = expired;
@@ -322,20 +404,20 @@
 
   window.toggleStatus = function(uid, newStatus) {
     update(ref(db, 'users/' + uid), { status: newStatus });
-    if(newStatus === 'blocked') showToast(`User ${uid} blocked!`, true);
-    else showToast(`User ${uid} unblocked!`);
+    if(newStatus === 'blocked') showToast(`${uid} Blocked!`, true);
+    else showToast(`${uid} Unblocked!`);
   };
 
   window.deleteUser = function(uid) {
     if(confirm("Permanently delete VIP Key: " + uid + "?")) {
       remove(ref(db, 'users/' + uid));
-      showToast(`Key ${uid} deleted.`, true);
+      showToast(`${uid} Deleted.`, true);
     }
   };
 
   window.resetDevice = function(uid) {
     update(ref(db, 'users/' + uid), { deviceId: "" });
-    showToast(`Device unlinked for ${uid}. They can login on a new phone.`);
+    showToast(`Device unlinked for ${uid}.`);
   };
 
 </script>
